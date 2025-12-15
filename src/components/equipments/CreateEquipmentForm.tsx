@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { useRouter } from "next/router";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useState } from "react";
 
 export function CreateEquipmentForm({
@@ -13,32 +13,43 @@ export function CreateEquipmentForm({
   roomId: string;
   close?: () => void;
 }) {
-  const schema = z.object({
-    name: z.string().min(1, "Name is required"),
-    quantity: z.number().min(1, "Quantity must be at least 1"),
-    origin: z.string().min(1, "Origin is required"),
-    warrantyUntil: z.preprocess(
-      (arg) => (arg === "" ? undefined : arg),
-      z.iso.date().optional(),
-    ),
-    isActive: z.boolean(),
-  });
+  const schema = z.intersection(
+    z.object({
+      name: z.string().min(1, "Name is required"),
+      quantity: z.number().min(1, "Quantity must be at least 1"),
+      origin: z.string().min(1, "Origin is required"),
+      isActive: z.boolean(),
+    }),
+    z.union([
+      z.object({ hasWarranty: z.literal(true), warrantyUntil: z.iso.date() }),
+      z.object({
+        hasWarranty: z.literal(false),
+        warrantyUntil: z.any().optional(),
+      }),
+    ]),
+  );
 
   const {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       quantity: 1,
       isActive: false,
+      hasWarranty: false,
     },
   });
 
+  const hasWarranty = useWatch({
+    control,
+    name: "hasWarranty",
+  });
+
   const queryClient = useQueryClient();
-  const [hasWarranty, setHasWarranty] = useState(false);
 
   const {
     mutate: createEquipment,
@@ -65,12 +76,11 @@ export function CreateEquipmentForm({
 
       throw new Error(res.error?.value?.message);
     },
-    onSuccess(docId) {
+    onSuccess() {
       queryClient.invalidateQueries({
         queryKey: ["rooms", roomId, "equipments"],
       });
       close?.();
-      reset();
     },
   });
 
@@ -125,19 +135,22 @@ export function CreateEquipmentForm({
           <input
             type="checkbox"
             className="checkbox"
-            checked={hasWarranty}
-            onChange={(event) => setHasWarranty(event.target.checked)}
+            {...register("hasWarranty")}
           />
           Has warranty until
         </label>
-        <input
-          id="equipmentform-warranty"
-          className={`input input-border ${hasWarranty ? "" : "hidden"}`}
-          type="date"
-          {...register("warrantyUntil")}
-        />
+        {hasWarranty && (
+          <input
+            id="equipmentform-warranty"
+            className="input input-border"
+            type="date"
+            {...register("warrantyUntil")}
+          />
+        )}
         {errors.warrantyUntil && (
-          <p className="text-error">{errors.warrantyUntil.message}</p>
+          <p className="text-error">
+            {errors.warrantyUntil.message?.toString()}
+          </p>
         )}
 
         <label className="label my-2">

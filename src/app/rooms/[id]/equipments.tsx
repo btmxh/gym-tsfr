@@ -2,23 +2,15 @@
 
 import {
   CheckIcon,
-  InformationCircleIcon,
   PencilSquareIcon,
   PlusIcon,
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/solid";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { z } from "zod";
+import { useQuery } from "@tanstack/react-query";
 import { useFormatter, useTranslations } from "next-intl";
 import { useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import { roomTypes, RoomWithId } from "@/lib/gym/room";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "@/lib/eden";
-import { useRouter } from "@/i18n/navigation";
-import { DeleteRoomForm } from "@/components/rooms/DeleteRoomForm";
-import { UpdateRoomForm } from "@/components/rooms/UpdateRoomForm";
 import { EquipmentWithId } from "@/lib/gym/equipment";
 import { CreateEquipmentForm } from "@/components/equipments/CreateEquipmentForm";
 import { UpdateEquipmentForm } from "@/components/equipments/UpdateEquipmentForm";
@@ -31,15 +23,21 @@ export function EquipmentList({ roomId }: { roomId: string }) {
   const t = useTranslations("Equipment");
   const format = useFormatter();
 
-  const { data: rooms, isPending } = useQuery({
-    queryKey: ["rooms", roomId, "equipments"],
+  const [offset, setOffset] = useState(0);
+  const [createKey, setCreateKey] = useState(0);
+  const limit = 5;
+
+  const { data: equipments, isPending } = useQuery({
+    queryKey: ["rooms", roomId, "equipments", { offset, limit }],
     queryFn: async () => {
       if (roomId === undefined) return [];
       const res = await api
         .rooms({ id: roomId })
-        .equipments.list.get({ offset: 0, limit: 20 });
-      return res.data ?? [];
+        .equipments.list.get({ query: { offset, limit } });
+      const x = res.data ?? { data: [], hasMore: false };
+      return x;
     },
+    placeholderData: (data) => data,
   });
 
   const [equipmentToUpdate, setEquipmentToUpdate] = useState<
@@ -52,9 +50,11 @@ export function EquipmentList({ roomId }: { roomId: string }) {
   return (
     <section className="flex flex-col items-center w-full p-4">
       <div className="w-full max-w-7xl flex flex-col items-center">
-        <div className="w-full flex items-center justify-end mb-4">
+        <div className="w-full flex items-center justify-between mb-4">
           <button
             onClick={() => {
+              // HACK: force remount to reset form state
+              setCreateKey((k) => k + 1);
               createDialogRef.current?.showModal();
             }}
             className="btn btn-primary font-bold"
@@ -63,8 +63,33 @@ export function EquipmentList({ roomId }: { roomId: string }) {
             Create new
           </button>
 
+          <div className="flex items-center gap-4">
+            Page {Math.floor(offset / limit) + 1}
+            <div className="join">
+              <button
+                className="btn btn-primary join-item"
+                onClick={() => {
+                  setOffset((o) => Math.max(0, o - limit));
+                }}
+                disabled={offset === 0}
+              >
+                {"<"}
+              </button>
+              <button
+                className="btn btn-primary join-item"
+                onClick={() => {
+                  setOffset((o) => o + limit);
+                }}
+                disabled={!equipments?.hasMore}
+              >
+                {">"}
+              </button>
+            </div>
+          </div>
+
           <dialog ref={createDialogRef} className="modal">
             <CreateEquipmentForm
+              key={createKey}
               roomId={roomId}
               close={() => createDialogRef.current?.close()}
             />
@@ -91,7 +116,7 @@ export function EquipmentList({ roomId }: { roomId: string }) {
                 </tr>
               </thead>
               <tbody>
-                {(rooms ?? []).map((equipment) => (
+                {(equipments?.data ?? []).map((equipment) => (
                   <tr
                     key={`equipment-${equipment._id}`}
                     className="hover:bg-base-300"
@@ -101,9 +126,10 @@ export function EquipmentList({ roomId }: { roomId: string }) {
                     <td>{format.dateTime(equipment.createdAt, {})}</td>
                     <td>{equipment.origin}</td>
                     <td>
-                      {equipment.warrantyUntil !== undefined
+                      {equipment.warrantyUntil !== undefined &&
+                      equipment.warrantyUntil !== null
                         ? format.dateTime(equipment.warrantyUntil, {})
-                        : "Unknown"}
+                        : "-"}
                     </td>
                     <td>
                       {equipment.isActive ? (

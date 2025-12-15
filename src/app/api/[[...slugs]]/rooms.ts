@@ -24,20 +24,26 @@ export const roomsRouter = new Elysia({ prefix: "/rooms" })
   })
   .get(
     "/:id/equipments/list",
-    async ({ body, params: { id } }) => {
-      return (
-        (await db
-          .collection("equipments")
-          .find({ roomId: new ObjectId(id) })
-          // .skip(offset)
-          // .limit(limit)
-          .toArray()) as unknown as EquipmentWithId[]
-      );
+    async ({ params: { id }, query: { offset, limit } }) => {
+      const data = await db
+        .collection("equipments")
+        .find({ roomId: new ObjectId(id) })
+        .skip(offset)
+        .limit(limit + 1)
+        .toArray();
+      const hasMore = data.length > limit;
+      if (hasMore) {
+        data.pop();
+      }
+      return {
+        data,
+        hasMore,
+      };
     },
     {
-      body: z.object({
-        offset: z.number().min(0),
-        limit: z.number().min(1).max(20),
+      query: z.object({
+        offset: z.coerce.number().min(0),
+        limit: z.coerce.number().min(1).max(20),
       }),
     },
   )
@@ -89,6 +95,8 @@ export const roomsRouter = new Elysia({ prefix: "/rooms" })
     }) => {
       const session = await auth.api.getSession({ headers: request.headers });
 
+      const roomId = newRoomId ?? id;
+
       // TODO: use a proper permission system
       if (!session || session.user.role !== "admin")
         return status(401, {
@@ -101,14 +109,11 @@ export const roomsRouter = new Elysia({ prefix: "/rooms" })
         { _id: new ObjectId(equipmentId), roomId: new ObjectId(id) },
         {
           $set: {
-            roomId: newRoomId ? new ObjectId(newRoomId) : undefined,
+            roomId: roomId ? new ObjectId(roomId) : undefined,
             name,
             quantity,
             origin,
-            warrantyUntil:
-              warrantyUntil || warrantyUntil === undefined
-                ? undefined
-                : new Date(warrantyUntil),
+            warrantyUntil: warrantyUntil ? new Date(warrantyUntil) : undefined,
             isActive,
             updatedAt: now,
           },
@@ -122,6 +127,7 @@ export const roomsRouter = new Elysia({ prefix: "/rooms" })
     },
     {
       body: z.object({
+        newRoomId: z.string().optional(),
         name: z.string().min(1, "Name is required"),
         quantity: z.number().min(1, "Quantity must be at least 1"),
         origin: z.string().min(1, "Origin is required"),
@@ -237,10 +243,7 @@ export const roomsRouter = new Elysia({ prefix: "/rooms" })
         name,
         quantity,
         origin,
-        warrantyUntil:
-          warrantyUntil || warrantyUntil === undefined
-            ? undefined
-            : new Date(warrantyUntil),
+        warrantyUntil: warrantyUntil ? new Date(warrantyUntil) : undefined,
         isActive,
         createdAt: now,
         updatedAt: now,

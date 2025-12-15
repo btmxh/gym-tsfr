@@ -5,7 +5,7 @@ export type Equipment<IdType = string> = {
   name: string;
   quantity: number;
   origin: string;
-  warrantyUntil?: Date;
+  warrantyUntil?: Date | null;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;

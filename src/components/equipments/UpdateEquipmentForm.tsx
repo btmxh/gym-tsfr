@@ -42,8 +42,6 @@ export function UpdateEquipmentForm({
     },
   });
 
-  console.debug(equipment?.warrantyUntil?.toISOString().slice(0, 10));
-
   const [hasWarranty, setHasWarranty] = useState(
     equipment?.warrantyUntil !== undefined,
   );
