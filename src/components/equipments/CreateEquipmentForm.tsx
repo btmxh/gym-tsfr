@@ -5,6 +5,7 @@ import { z } from "zod";
 import { useRouter } from "next/router";
 import { useForm, useWatch } from "react-hook-form";
 import { useState } from "react";
+import { useToast } from "../toast-context";
 
 export function CreateEquipmentForm({
   roomId,
@@ -50,6 +51,7 @@ export function CreateEquipmentForm({
   });
 
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const {
     mutate: createEquipment,
@@ -81,6 +83,9 @@ export function CreateEquipmentForm({
         queryKey: ["rooms", roomId, "equipments"],
       });
       close?.();
+    },
+    onError(err) {
+      toast({ type: "error", message: err.message });
     },
   });
 

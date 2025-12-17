@@ -3,41 +3,24 @@
 import { Link } from "@/i18n/navigation";
 import {
   ArrowPathIcon,
-  ArrowRightStartOnRectangleIcon,
   CheckBadgeIcon,
   EnvelopeIcon,
-  EyeIcon,
-  EyeSlashIcon,
-  LockClosedIcon,
-  PhoneIcon,
-  ShieldCheckIcon,
-  ShieldExclamationIcon,
-  UserIcon,
 } from "@heroicons/react/24/solid";
-import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import z from "zod";
 import { authClient } from "@/lib/auth-client";
 import { useSessionStorage } from "usehooks-ts";
+import { useMutation } from "@tanstack/react-query";
 
 export default function LoginPage() {
   const [pendingEmail] = useSessionStorage("pendingEmail", "");
-  const [isPending, setPending] = useState(false);
 
-  const onSubmit = async () => {
-    try {
-      setPending(true);
-
+  const { mutate: onSubmit, isPending } = useMutation({
+    mutationFn: async () => {
       await authClient.sendVerificationEmail({
         email: pendingEmail,
         callbackURL: "/auth/login",
       });
-    } finally {
-      setPending(false);
-    }
-  };
+    },
+  });
 
   return (
     <main className="grid grid-cols-1 grid-rows-1 lg:grid-cols-2 items-center min-h-screen group">
@@ -108,7 +91,7 @@ export default function LoginPage() {
 
             <button
               type="button"
-              onClick={onSubmit}
+              onClick={() => onSubmit()}
               disabled={isPending}
               className="btn btn-primary w-full mt-4 shadow-2xl"
             >

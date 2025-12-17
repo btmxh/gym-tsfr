@@ -11,6 +11,7 @@ import {
 } from "@tanstack/react-query";
 import { z } from "zod";
 import { api } from "@/lib/eden";
+import { useToast } from "@/components/toast-context";
 
 function toDateInputValue(date: Date) {
   return date.toISOString().slice(0, 10);
@@ -48,37 +49,30 @@ function GeneralInformation({
     },
   });
 
-  const [isPending, setIsPending] = useState(false);
-  const [editError, setEditError] = useState<string | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
+  const toast = useToast();
 
-  const onSubmit = async (data: z.infer<typeof generalInfoSchema>) => {
-    try {
-      setIsPending(true);
-      await authClient.updateUser(
-        {
-          name: data.name,
-          phoneNumber: data.phoneNumber,
-          occupation: data.occupation ?? undefined,
-          birthday: data.birthday ?? undefined,
-        },
-        {
-          onError: (context) => {
-            setEditError(context.error.message);
-          },
-        },
-      );
-    } finally {
-      setIsPending(false);
-    }
-  };
+  const { mutate: onSubmit, isPending } = useMutation({
+    mutationFn: async (data: z.infer<typeof generalInfoSchema>) => {
+      await authClient.updateUser({
+        name: data.name,
+        phoneNumber: data.phoneNumber,
+        occupation: data.occupation ?? undefined,
+        birthday: data.birthday ?? undefined,
+      });
+    },
+    onError: (error) => toast({ type: "error", message: error.message }),
+    onSuccess: () =>
+      toast({ type: "success", message: "User information updated" }),
+  });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
+    <form
+      onSubmit={handleSubmit((values) => onSubmit(values))}
+      className="w-full max-w-lg"
+    >
       <fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
         <legend className="fieldset-legend">General information</legend>
-
-        {editError && <p className="text-error-content">{editError}</p>}
 
         <label className="fieldset-label" htmlFor={`aigi-email`}>
           Email
@@ -159,11 +153,9 @@ function UpdateAvatar({
   );
   const [file, setFile] = useState<File | null>(null);
 
-  const {
-    mutate: updateAvatar,
-    isPending,
-    error,
-  } = useMutation({
+  const toast = useToast();
+
+  const { mutate: updateAvatar, isPending } = useMutation({
     mutationFn: async (file: File) => {
       const res = await api.avatar.upload.post({ file });
       if (res.status === 200) {
@@ -180,6 +172,10 @@ function UpdateAvatar({
         await authClient.updateUser({ image: data.avatarUrl });
       }
       setFile(null);
+      toast({ type: "success", message: "User avatar updated" });
+    },
+    onError(error) {
+      toast({ type: "error", message: error.message });
     },
   });
 
@@ -193,7 +189,6 @@ function UpdateAvatar({
     >
       <fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
         <legend className="fieldset-legend">Profile picture</legend>
-        {error && <p className="text-error-content">{error.message}</p>}
 
         <div className="avatar">
           <div className="ring-primary ring-offset-base-100 w-24 rounded-full ring-2 ring-offset-2">
@@ -263,34 +258,27 @@ function UpdatePassword() {
     resolver: zodResolver(updatePasswordSchema),
   });
 
-  const [isPending, setIsPending] = useState(false);
-  const [updateError, setUpdateError] = useState<string | null>(null);
+  const toast = useToast();
 
-  const onSubmit = async (data: z.infer<typeof updatePasswordSchema>) => {
-    try {
-      setIsPending(true);
-      setUpdateError(null);
-      await authClient.changePassword(
-        {
-          currentPassword: data.currentPassword,
-          newPassword: data.newPassword,
-        },
-        {
-          onError: (context) => {
-            setUpdateError(context.error.message);
-          },
-        },
-      );
-    } finally {
-      setIsPending(false);
-    }
-  };
+  const { mutate: onSubmit, isPending } = useMutation({
+    mutationFn: async (data: z.infer<typeof updatePasswordSchema>) => {
+      await authClient.changePassword({
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      });
+    },
+    onSuccess: () =>
+      toast({ type: "success", message: "Updated user password" }),
+    onError: (err) => toast({ type: "error", message: err.message }),
+  });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-lg w-full">
+    <form
+      onSubmit={handleSubmit((values) => onSubmit(values))}
+      className="max-w-lg w-full"
+    >
       <fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4">
         <legend className="fieldset-legend">Update password</legend>
-        {updateError && <p className="text-error-content">{updateError}</p>}
         <label htmlFor="current-password" className="fieldset-label">
           Current password
         </label>
@@ -345,6 +333,8 @@ function UpdateFingerprint() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
 
+  const toast = useToast();
+
   const {
     mutate: updateFingerprint,
     isPending,
@@ -358,12 +348,14 @@ function UpdateFingerprint() {
 
       throw new Error(res.error?.value?.message || "Upload failed");
     },
-    onSuccess: (data) => {
+    onSuccess() {
       setFile(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
+      toast({ type: "success", message: "Fingerprint file uploaded" });
     },
+    onError: (err) => toast({ type: "error", message: err.message }),
   });
 
   return (

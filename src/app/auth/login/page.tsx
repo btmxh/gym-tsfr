@@ -14,6 +14,8 @@ import { useState } from "react";
 import z from "zod";
 import { authClient } from "@/lib/auth-client";
 import Logo from "@/components/logo";
+import { useToast } from "@/components/toast-context";
+import { useMutation } from "@tanstack/react-query";
 
 export default function LoginPage() {
   const formSchema = z.object({
@@ -33,30 +35,23 @@ export default function LoginPage() {
   });
 
   const [showPassword, setShowPassword] = useState(false);
-  const [authError, setAuthError] = useState<string | null>(null);
-  const [isPending, setPending] = useState(false);
+  const toast = useToast();
 
-  const onSubmit = async (formData: z.infer<typeof formSchema>) => {
-    try {
-      setPending(true);
-      setAuthError(null);
-
+  const { mutate: onSubmit, isPending } = useMutation({
+    mutationFn: async (formData: z.infer<typeof formSchema>) => {
       await authClient.signIn.email(
         {
           email: formData.email,
           password: formData.password,
           callbackURL: "/",
         },
-        {
-          onError: (context) => {
-            setAuthError(context.error.message);
-          },
-        },
+        {},
       );
-    } finally {
-      setPending(false);
-    }
-  };
+    },
+    onError: (error) => {
+      toast({ type: "error", message: error.message });
+    },
+  });
 
   return (
     <main className="grid grid-cols-1 grid-rows-1 lg:grid-cols-2 items-center min-h-screen group">
@@ -71,7 +66,7 @@ export default function LoginPage() {
       </div>
       <div className="z-1 row-start-1 col-start-1 lg:col-start-2 flex justify-center items-center m-8">
         <form
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit((values) => onSubmit(values))}
           className="rounded-xl bg-base-200 text-base-content p-8 w-full max-w-md"
         >
           <fieldset className="fieldset">
@@ -81,12 +76,6 @@ export default function LoginPage() {
                 Please log in to your account to proceed.
               </p>
             </legend>
-
-            {authError && (
-              <p className="text-error text-center text-sm space-y-2">
-                {authError}
-              </p>
-            )}
 
             <label htmlFor="email" className="font-bold">
               Email

@@ -19,6 +19,7 @@ import { api } from "@/lib/eden";
 import { useRouter } from "@/i18n/navigation";
 import { DeleteRoomForm } from "@/components/rooms/DeleteRoomForm";
 import { UpdateRoomForm } from "@/components/rooms/UpdateRoomForm";
+import { useToast } from "@/components/toast-context";
 
 function CreateRoomForm() {
   const t = useTranslations("Room");
@@ -43,6 +44,7 @@ function CreateRoomForm() {
   });
 
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const {
     mutate: createRoom,
@@ -64,6 +66,9 @@ function CreateRoomForm() {
     onSuccess(docId) {
       router.push(`/rooms/${docId}`);
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
+    },
+    onError(err) {
+      toast({ type: "error", message: err.message });
     },
   });
 
