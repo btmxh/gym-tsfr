@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
+import { useToast } from "../toast-context";
 
 export function UpdateEquipmentForm({
   roomId,
@@ -52,6 +53,7 @@ export function UpdateEquipmentForm({
   const queryClient = useQueryClient();
 
   const hasWarranty = useWatch({ control, name: "hasWarranty" });
+  const toast = useToast();
 
   const {
     mutate: updateEquipment,
@@ -87,6 +89,10 @@ export function UpdateEquipmentForm({
         queryKey: ["rooms", roomId, "equipments"],
       });
       onSuccess?.();
+      toast({ type: "success", message: "Equipment updated" });
+    },
+    onError(err) {
+      toast({ type: "error", message: err.message });
     },
   });
 
