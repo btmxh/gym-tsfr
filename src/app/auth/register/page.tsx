@@ -15,13 +15,15 @@ import {
   UserIcon,
 } from "@heroicons/react/24/solid";
 import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import z from "zod";
 import { authClient } from "@/lib/auth-client";
 import { useSessionStorage } from "usehooks-ts";
 import React from "react";
+import { useToast } from "@/components/toast-context";
+import { useMutation } from "@tanstack/react-query";
 
 export default function RegisterPage({
   searchParams,
@@ -49,7 +51,7 @@ export default function RegisterPage({
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(formSchema),
@@ -60,39 +62,30 @@ export default function RegisterPage({
     },
   });
 
+  const confirmPassword = useWatch({ name: "confirmPassword", control });
+
   const [_, setPendingEmail] = useSessionStorage("pendingEmail", "");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [authError, setAuthError] = useState<string | null>(null);
-  const [isPending, setPending] = useState(false);
   const router = useRouter();
+  const toast = useToast();
 
-  const onSubmit = async (formData: z.infer<typeof formSchema>) => {
-    try {
-      setPending(true);
-      setAuthError(null);
-
-      await authClient.signUp.email(
-        {
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          phoneNumber: formData.phoneNumber,
-          callbackURL: "/auth/login",
-        },
-        {
-          onError: (context) => {
-            setAuthError(context.error.message);
-          },
-        },
-      );
-    } finally {
-      setPendingEmail(formData.email);
-      setPending(false);
-      router.push("/auth/register-done");
-    }
-  };
+  const { mutate: onSubmit, isPending } = useMutation({
+    mutationFn: async (formData: z.infer<typeof formSchema>) => {
+      await authClient.signUp.email({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        phoneNumber: formData.phoneNumber,
+        callbackURL: "/auth/login",
+      });
+    },
+    onSuccess: () => router.push("/auth/register-done"),
+    onError: (error) => {
+      toast({ type: "error", message: error.message });
+    },
+  });
 
   return (
     <main className="grid grid-cols-1 grid-rows-1 lg:grid-cols-2 items-center min-h-screen group">
@@ -123,7 +116,7 @@ export default function RegisterPage({
       </div>
       <div className="z-1 row-start-1 col-start-1 lg:col-start-2 flex justify-center items-center m-8">
         <form
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit((values) => onSubmit(values))}
           className="rounded-xl bg-base-200 text-base-content p-8 w-full max-w-md"
         >
           <fieldset className="fieldset">
@@ -133,12 +126,6 @@ export default function RegisterPage({
                 Join the community and start your fitness journey today!
               </p>
             </legend>
-
-            {authError && (
-              <p className="text-error text-center text-sm space-y-2">
-                {authError}
-              </p>
-            )}
 
             <label htmlFor="email" className="font-bold">
               Email
@@ -269,7 +256,7 @@ export default function RegisterPage({
                 />
               </div>
 
-              {errors.confirmPassword && watch("confirmPassword") !== "" && (
+              {errors.confirmPassword && confirmPassword !== "" && (
                 <p className="text-error">{errors.confirmPassword.message}</p>
               )}
             </div>

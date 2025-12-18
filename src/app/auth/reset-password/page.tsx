@@ -14,6 +14,8 @@ import { useState } from "react";
 import z from "zod";
 import { authClient } from "@/lib/auth-client";
 import Logo from "@/components/logo";
+import { useMutation } from "@tanstack/react-query";
+import { useToast } from "@/components/toast-context";
 
 export default function LoginPage() {
   const formSchema = z
@@ -41,33 +43,19 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [authError, setAuthError] = useState<string | null>(null);
-  const [isPending, setPending] = useState(false);
-  const router = useRouter();
+  const toast = useToast();
 
-  const onSubmit = async (formData: z.infer<typeof formSchema>) => {
-    const token =
-      new URLSearchParams(window.location.search).get("token") ?? undefined;
-    try {
-      setPending(true);
-      setAuthError(null);
-
-      await authClient.resetPassword(
-        {
-          newPassword: formData.password,
-          token,
-        },
-        {
-          onError: (context) => {
-            setAuthError(context.error.message);
-          },
-        },
-      );
-    } finally {
-      router.push("/auth/login");
-      setPending(false);
-    }
-  };
+  const { mutate: onSubmit, isPending } = useMutation({
+    mutationFn: async (formData: z.infer<typeof formSchema>) => {
+      const token =
+        new URLSearchParams(window.location.search).get("token") ?? undefined;
+      await authClient.resetPassword({
+        newPassword: formData.password,
+        token,
+      });
+    },
+    onError: (err) => toast({ type: "success", message: err.message }),
+  });
 
   return (
     <main className="grid grid-cols-1 grid-rows-1 lg:grid-cols-2 items-center min-h-screen group">
@@ -82,7 +70,7 @@ export default function LoginPage() {
       </div>
       <div className="z-1 row-start-1 col-start-1 lg:col-start-2 flex justify-center items-center m-8">
         <form
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit((values) => onSubmit(values))}
           className="rounded-xl bg-base-200 text-base-content p-8 w-full max-w-md"
         >
           <fieldset className="fieldset">
@@ -92,12 +80,6 @@ export default function LoginPage() {
                 Enter your new password below to reset it.
               </p>
             </legend>
-
-            {authError && (
-              <p className="text-error text-center text-sm space-y-2">
-                {authError}
-              </p>
-            )}
 
             <label htmlFor="password" className="font-bold">
               New password

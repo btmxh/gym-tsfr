@@ -3,6 +3,7 @@
 import {
   CheckIcon,
   InformationCircleIcon,
+  ListBulletIcon,
   PencilSquareIcon,
   PlusIcon,
   TrashIcon,
@@ -19,6 +20,7 @@ import { api } from "@/lib/eden";
 import { useRouter } from "@/i18n/navigation";
 import { DeleteRoomForm } from "@/components/rooms/DeleteRoomForm";
 import { UpdateRoomForm } from "@/components/rooms/UpdateRoomForm";
+import { useToast } from "@/components/toast-context";
 
 function CreateRoomForm() {
   const t = useTranslations("Room");
@@ -43,6 +45,7 @@ function CreateRoomForm() {
   });
 
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const {
     mutate: createRoom,
@@ -64,6 +67,9 @@ function CreateRoomForm() {
     onSuccess(docId) {
       router.push(`/rooms/${docId}`);
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
+    },
+    onError(err) {
+      toast({ type: "error", message: err.message });
     },
   });
 
@@ -143,26 +149,31 @@ export default function RoomsPage() {
 
   return (
     <main className="flex flex-col items-center w-full p-4">
-      <div className="w-full max-w-7xl flex flex-col items-center">
-        <h1 className="font-bold text-4xl mb-4">Managed rooms</h1>
+      <div className="card shadow-xl bg-base-200 w-full max-w-7xl flex flex-col items-center p-4">
+        <div className="w-full flex items-center justify-between mb-4">
+          <h1 className="flex items-center font-bold text-3xl mb-4">
+            <ListBulletIcon className="size-8 mr-2 text-primary" />
+            Managed rooms
+          </h1>
 
-        <div className="w-full flex items-center justify-end mb-4">
-          <button
-            onClick={() => {
-              createDialogRef.current?.showModal();
-            }}
-            className="btn btn-primary font-bold"
-          >
-            <PlusIcon className="size-4" />
-            Create new
-          </button>
+          <div className="flex items-center justify-end mb-4">
+            <button
+              onClick={() => {
+                createDialogRef.current?.showModal();
+              }}
+              className="btn btn-primary font-bold"
+            >
+              <PlusIcon className="size-4" />
+              Create new
+            </button>
 
-          <dialog ref={createDialogRef} className="modal">
-            <CreateRoomForm />
-            <form method="dialog" className="modal-backdrop">
-              <button>close</button>
-            </form>
-          </dialog>
+            <dialog ref={createDialogRef} className="modal">
+              <CreateRoomForm />
+              <form method="dialog" className="modal-backdrop">
+                <button>close</button>
+              </form>
+            </dialog>
+          </div>
         </div>
 
         {isPending ? (

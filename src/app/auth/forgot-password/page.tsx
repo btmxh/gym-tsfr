@@ -1,20 +1,14 @@
 "use client";
 
-import { Link, useRouter } from "@/i18n/navigation";
-import {
-  ArrowRightEndOnRectangleIcon,
-  EnvelopeIcon,
-  EyeIcon,
-  EyeSlashIcon,
-  LockClosedIcon,
-  LockOpenIcon,
-} from "@heroicons/react/24/solid";
+import { useRouter } from "@/i18n/navigation";
+import { EnvelopeIcon, LockOpenIcon } from "@heroicons/react/24/solid";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import z from "zod";
 import { authClient } from "@/lib/auth-client";
 import Logo from "@/components/logo";
+import { useToast } from "@/components/toast-context";
+import { useMutation } from "@tanstack/react-query";
 
 export default function LoginPage() {
   const formSchema = z.object({
@@ -29,22 +23,23 @@ export default function LoginPage() {
     resolver: zodResolver(formSchema),
   });
 
-  const [isPending, setPending] = useState(false);
-
   const router = useRouter();
+  const toast = useToast();
 
-  const onSubmit = async (formData: z.infer<typeof formSchema>) => {
-    try {
-      setPending(true);
+  const { mutate: onSubmit, isPending } = useMutation({
+    mutationFn: async (formData: z.infer<typeof formSchema>) => {
       await authClient.requestPasswordReset({
         email: formData.email,
         redirectTo: "/auth/reset-password",
       });
-    } finally {
-      setPending(false);
+    },
+    onSuccess: () => {
       router.push("/auth/forgot-password-done");
-    }
-  };
+    },
+    onError: (err) => {
+      toast({ type: "error", message: err.message });
+    },
+  });
 
   return (
     <main className="grid grid-cols-1 grid-rows-1 lg:grid-cols-2 items-center min-h-screen group">
@@ -59,7 +54,7 @@ export default function LoginPage() {
       </div>
       <div className="z-1 row-start-1 col-start-1 lg:col-start-2 flex justify-center items-center m-8">
         <form
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit((values) => onSubmit(values))}
           className="rounded-xl bg-base-200 text-base-content p-8 w-full max-w-md"
         >
           <fieldset className="fieldset">

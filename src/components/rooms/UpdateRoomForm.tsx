@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useToast } from "../toast-context";
 
 export function UpdateRoomForm({
   room,
@@ -36,6 +37,7 @@ export function UpdateRoomForm({
   });
 
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const {
     mutate: updateRoom,
@@ -57,6 +59,9 @@ export function UpdateRoomForm({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
       onSuccess?.();
+    },
+    onError(err) {
+      toast({ type: "error", message: err.message });
     },
   });
 
