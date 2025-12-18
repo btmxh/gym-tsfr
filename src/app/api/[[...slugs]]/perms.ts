@@ -30,20 +30,22 @@ export const checkPerm = async (
     },
   });
 
-  if (session === undefined) unauthorized(status);
-  else forbidden(status);
+  if (!hasPerm) {
+    if (session === undefined) unauthorized(status);
+    else forbidden(status);
+  }
 
-  return hasPerm ? session : undefined;
+  return session;
 };
 
 export const unauthorized = (status: typeof elysiaStatus) => {
-  return status(401, {
+  throw status(401, {
     message: "Unauthorized",
   });
 };
 
 export const forbidden = (status: typeof elysiaStatus) => {
-  return status(403, {
+  throw status(403, {
     message: "Forbidden",
   });
 };
