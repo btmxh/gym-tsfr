@@ -87,5 +87,26 @@
       "massage_therapy": "Monthly massage therapy session",
       "exclusive_events": "Access to exclusive member events"
     }
+  },
+  "Payment": {
+    "title": "Payment Details",
+    "packageSummary": "Your selected membership plan",
+    "cardInformation": "Card Information",
+    "cardNumber": "Card Number",
+    "cardHolder": "Card Holder Name",
+    "expiryDate": "Expiry Date",
+    "cvv": "CVV",
+    "billingAddress": "Billing Address",
+    "address": "Street Address",
+    "city": "City",
+    "zipCode": "Zip Code",
+    "country": "Country",
+    "cancel": "Cancel",
+    "confirmPayment": "Confirm Payment",
+    "processing": "Processing...",
+    "securityNotice": "Your payment information is encrypted and secure. We never store your card details.",
+    "successTitle": "Payment Successful!",
+    "successMessage": "Your membership has been activated. Welcome to GymEmbrace!",
+    "goToDashboard": "Go to Dashboard"
   }
 }

@@ -83,5 +83,26 @@
       "massage_therapy": "Buổi massage trị liệu hàng tháng",
       "exclusive_events": "Tham gia sự kiện độc quyền"
     }
+  },
+  "Payment": {
+    "title": "Chi Tiết Thanh Toán",
+    "packageSummary": "Gói thành viên bạn đã chọn",
+    "cardInformation": "Thông Tin Thẻ",
+    "cardNumber": "Số Thẻ",
+    "cardHolder": "Tên Chủ Thẻ",
+    "expiryDate": "Ngày Hết Hạn",
+    "cvv": "Mã CVV",
+    "billingAddress": "Địa Chỉ Thanh Toán",
+    "address": "Địa Chỉ",
+    "city": "Thành Phố",
+    "zipCode": "Mã Bưu Điện",
+    "country": "Quốc Gia",
+    "cancel": "Hủy",
+    "confirmPayment": "Xác Nhận Thanh Toán",
+    "processing": "Đang xử lý...",
+    "securityNotice": "Thông tin thanh toán của bạn được mã hóa và bảo mật. Chúng tôi không bao giờ lưu trữ thông tin thẻ của bạn.",
+    "successTitle": "Thanh Toán Thành Công!",
+    "successMessage": "Thành viên của bạn đã được kích hoạt. Chào mừng đến với GymEmbrace!",
+    "goToDashboard": "Về Trang Chính"
   }
 }
