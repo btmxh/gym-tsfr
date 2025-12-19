@@ -121,6 +121,65 @@ export const eventsRouter = new Elysia({ prefix: "/events" })
       }),
     },
   )
+  .get(
+    "/list/own",
+    async ({ query: { offset, limit }, request: { headers }, status }) => {
+      const session = (await checkPerm(headers, status, {
+        events: ["read:own"],
+      }))!;
+      // Add 1 to your limit for the check
+      const fetchLimit = limit + 1;
+
+      const events = await db
+        .collection("events")
+        .aggregate([
+          {
+            $match: {
+              userId: new ObjectId(session.user.id),
+            },
+          },
+          { $sort: { createdAt: -1 } },
+          { $skip: offset },
+          { $limit: fetchLimit }, // Fetch one extra record
+          { $unwind: { path: "$user", preserveNullAndEmptyArrays: true } },
+          {
+            $lookup: {
+              from: "rooms",
+              localField: "roomId",
+              foreignField: "_id",
+              as: "room",
+            },
+          },
+          { $unwind: { path: "$room", preserveNullAndEmptyArrays: true } },
+          {
+            $project: {
+              _id: 1,
+              mode: 1,
+              createdAt: 1,
+              "room.name": 1,
+            },
+          },
+        ])
+        .toArray();
+
+      // Check if we got more than the requested limit
+      const hasMore = events.length > limit;
+
+      // If we have an extra item, remove it so the frontend only gets the exact page size
+      const results = hasMore ? events.slice(0, limit) : events;
+
+      return {
+        events: results as EventWithDetails[],
+        hasMore,
+      };
+    },
+    {
+      query: z.object({
+        offset: z.coerce.number().min(0).default(0),
+        limit: z.coerce.number().min(1).max(20).default(20),
+      }),
+    },
+  )
   .ws("/ws", {
     async upgrade({ request: { headers }, status }) {
       await checkPerm(headers, status, { events: ["read"] });

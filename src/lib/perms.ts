@@ -3,7 +3,7 @@ import { defaultStatements, adminAc } from "better-auth/plugins/admin/access";
 
 export const statement = {
   ...defaultStatements,
-  events: ["create", "read"],
+  events: ["create", "read", "read:own"],
   rooms: ["create", "read", "update", "delete"],
   equipments: ["create", "read", "update", "delete"],
   feedbacks: ["create", "read"],
@@ -12,7 +12,7 @@ export const statement = {
 export const ac = createAccessControl(statement);
 
 export const admin = ac.newRole({
-  events: ["create", "read"],
+  events: ["create", "read", "read:own"],
   rooms: ["create", "read", "update", "delete"],
   equipments: ["create", "read", "update", "delete"],
   feedbacks: ["create", "read"],
@@ -20,21 +20,21 @@ export const admin = ac.newRole({
 });
 
 export const staff = ac.newRole({
-  events: ["create"],
+  events: ["create", "read:own"],
   rooms: ["create", "read", "update", "delete"],
   equipments: ["create", "read", "update", "delete"],
   feedbacks: ["create", "read"],
 });
 
 export const coach = ac.newRole({
-  events: [],
+  events: ["read:own"],
   rooms: ["read"],
   equipments: ["read"],
   feedbacks: ["create", "read"],
 });
 
 export const user = ac.newRole({
-  events: [],
+  events: ["read:own"],
   rooms: ["read"],
   equipments: ["read"],
   feedbacks: ["create", "read"],
