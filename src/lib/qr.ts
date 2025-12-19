@@ -1,7 +1,6 @@
-import { createHmac, randomBytes } from "crypto";
 import { auth } from "./auth";
 
-export const QRCODE_TIMEOUT = 15 * 1000;
+export const QRCODE_TIMEOUT = 60 * 1000;
 
 export type QRPayload = {
   userId: string;
