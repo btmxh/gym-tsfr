@@ -12,6 +12,7 @@ import {
   CubeIcon,
   CurrencyDollarIcon,
   FlagIcon,
+  QrCodeIcon,
   UserGroupIcon,
   UserPlusIcon,
 } from "@heroicons/react/24/solid";
@@ -23,6 +24,7 @@ import { HidePageChrome } from "./hide-page-chrome";
 export default function Navbar() {
   const routes = [
     ["Dashboard", "/dashboard", ChartPieIcon],
+    ["QR Scan", "/scan", QrCodeIcon],
     ["Rooms", "/rooms", BuildingOfficeIcon],
     ["Staff", "/staff", UserGroupIcon],
     ["Packages", "/packages", CubeIcon],

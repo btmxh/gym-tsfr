@@ -1,5 +1,8 @@
 import { MonthPicker, MonthYear } from "@/components/month-picker";
 import { authClient } from "@/lib/auth-client";
+import { api } from "@/lib/eden";
+import { EventWithDetails } from "@/lib/event";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { Fragment, useEffect, useRef, useState } from "react";
 
@@ -235,43 +238,57 @@ function WorkoutLog({
 }: {
   session: typeof authClient.$Infer.Session;
 }) {
-  const [events, setEvents] = useState<LogEvent[]>([]);
+  const limit = 5;
+  const {
+    data: events,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["workout-log", session.user.id],
+    initialPageParam: 0,
+    queryFn: async ({ pageParam }: { pageParam: number }) => {
+      const { data, error, status } = await api.events.list.own.get({
+        query: {
+          offset: pageParam ?? 0,
+          limit,
+        },
+      });
+      if (status === 200) {
+        return data!;
+      }
+      throw new Error(error?.value?.message ?? "Failed to fetch workout log");
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage || !lastPage.hasMore) return undefined;
+      return allPages.length * limit; // next offset
+    },
+  });
+  // const [events, setEvents] = useState<LogEvent[]>([]);
 
-  function eventLabel(ev: LogEvent) {
-    switch (ev.type) {
-      case "checkin":
+  function eventLabel(ev: EventWithDetails) {
+    switch (ev.mode) {
+      case "check-in":
         return (
           <span>
-            <b>Checked in</b> at {ev.center}
+            <b>Checked in</b> at {ev.room?.name}
           </span>
         );
-      case "checkout":
+      case "check-out":
         return (
           <span>
-            <b>Checked out</b> from {ev.center}
+            <b>Checked out</b> from {ev.room?.name}
           </span>
         );
     }
   }
-
-  const [hasMore, setHasMore] = useState(true);
 
   const loadingElem = useRef(null);
   useEffect(() => {
     if (!loadingElem.current) return;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasMore) {
-          setTimeout(
-            () => {
-              if (events.length <= 20) {
-                setEvents([...events, ...firstPage]);
-              } else {
-                setHasMore(false);
-              }
-            },
-            Math.random() * 1000 + 500,
-          );
+        if (entries[0].isIntersecting) {
+          fetchNextPage();
         }
       },
       {
@@ -281,13 +298,16 @@ function WorkoutLog({
 
     observer.observe(loadingElem.current);
     return () => observer.disconnect();
-  }, [loadingElem, hasMore, events]);
+  }, [loadingElem, events, fetchNextPage]);
+
+  const allEvents =
+    events === undefined ? [] : events.pages.flatMap((page) => page.events);
 
   return (
     <fieldset className="fieldset bg-base-200 border-base-300 rounded-box border p-4 w-full max-w-7xl">
       <legend className="fieldset-legend">Workout log</legend>
       <ul className="grid grid-cols-[auto_auto_1fr] bg-base-200 p-2 text-lg">
-        {events.map((ev, idx) => (
+        {allEvents.map((ev, idx) => (
           <div
             key={`workout-log-event-${idx}`}
             className="hover:bg-base-300 grid grid-cols-subgrid col-start-1 -col-end-1 p-2 gap-2 items-baseline"
@@ -296,20 +316,20 @@ function WorkoutLog({
               key={`event-date-${idx}`}
               className="text-base text-base-content/70"
             >
-              {idx + 1 < events.length &&
-                dateEquals(ev.time, events[idx + 1].time) &&
-                formatDateShort(ev.time)}
+              {(idx === 0 ||
+                !dateEquals(ev.createdAt, allEvents[idx - 1].createdAt)) &&
+                formatDateShort(ev.createdAt)}
             </div>
             <div
               key={`event-time-${idx}`}
               className="text-base text-base-content/70"
             >
-              {formatTimeShort(ev.time)}
+              {formatTimeShort(ev.createdAt)}
             </div>
             <div key={`event-label-${idx}`}>{eventLabel(ev)}</div>
           </div>
         ))}
-        {hasMore && (
+        {hasNextPage && (
           <div className="flex justify-center col-span-3" ref={loadingElem}>
             <span className="loading loading-dots loading-md"></span>
           </div>
