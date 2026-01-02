@@ -61,6 +61,7 @@
     "popular": "Phổ biến nhất",
     "perPeriod": "mỗi {period}",
     "choosePlan": "Chọn gói",
+    "inactive": "Không hoạt động",
     "errorLoading": "Không thể tải các gói thành viên. Vui lòng thử lại sau.",
     "contactInfo": "Cần giúp lựa chọn? Liên hệ đội ngũ của chúng tôi để được tư vấn cá nhân hóa!",
     "durations": {
@@ -87,6 +88,34 @@
       "massage_therapy": "Buổi massage trị liệu hàng tháng",
       "exclusive_events": "Tham gia sự kiện độc quyền"
     }
+  },
+  "PackageManagement": {
+    "createNew": "Tạo Gói Mới",
+    "editPackage": "Chỉnh Sửa Gói",
+    "deleteTitle": "Xóa Gói",
+    "deleteWarning": "Bạn có chắc chắn muốn xóa gói này? Hành động này không thể hoàn tác.",
+    "duration": "Thời Hạn",
+    "price": "Giá (VNĐ)",
+    "currency": "Tiền Tệ",
+    "features": "Tính Năng",
+    "featuresHint": "Mỗi tính năng một dòng",
+    "isActive": "Đang Hoạt Động",
+    "status": "Trạng Thái",
+    "active": "Hoạt Động",
+    "inactive": "Không Hoạt Động",
+    "create": "Tạo Gói",
+    "creating": "Đang tạo...",
+    "update": "Cập Nhật Gói",
+    "updating": "Đang cập nhật...",
+    "confirmDelete": "Xóa",
+    "deleting": "Đang xóa...",
+    "cancel": "Hủy",
+    "createSuccess": "Tạo gói thành công!",
+    "createError": "Không thể tạo gói",
+    "updateSuccess": "Cập nhật gói thành công!",
+    "updateError": "Không thể cập nhật gói",
+    "deleteSuccess": "Xóa gói thành công!",
+    "deleteError": "Không thể xóa gói"
   },
   "Payment": {
     "title": "Chi Tiết Thanh Toán",

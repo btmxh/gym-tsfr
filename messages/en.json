@@ -61,6 +61,7 @@
     "popular": "Most Popular",
     "perPeriod": "per {period}",
     "choosePlan": "Choose Plan",
+    "inactive": "Inactive",
     "errorLoading": "Failed to load membership plans. Please try again later.",
     "contactInfo": "Need help choosing? Contact our team for personalized recommendations!",
     "durations": {
@@ -87,6 +88,34 @@
       "massage_therapy": "Monthly massage therapy session",
       "exclusive_events": "Access to exclusive member events"
     }
+  },
+  "PackageManagement": {
+    "createNew": "Create New Package",
+    "editPackage": "Edit Package",
+    "deleteTitle": "Delete Package",
+    "deleteWarning": "Are you sure you want to delete this package? This action cannot be undone.",
+    "duration": "Duration",
+    "price": "Price (VND)",
+    "currency": "Currency",
+    "features": "Features",
+    "featuresHint": "One feature per line",
+    "isActive": "Active",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "create": "Create Package",
+    "creating": "Creating...",
+    "update": "Update Package",
+    "updating": "Updating...",
+    "confirmDelete": "Delete",
+    "deleting": "Deleting...",
+    "cancel": "Cancel",
+    "createSuccess": "Package created successfully!",
+    "createError": "Failed to create package",
+    "updateSuccess": "Package updated successfully!",
+    "updateError": "Failed to update package",
+    "deleteSuccess": "Package deleted successfully!",
+    "deleteError": "Failed to delete package"
   },
   "Payment": {
     "title": "Payment Details",
