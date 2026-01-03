@@ -245,6 +245,17 @@ export default function MembershipsPage() {
             <h1 className="text-4xl md:text-5xl font-bold">
               {t("title")}
             </h1>
+            {/* Debug quyen admin, nho xoa :v */}
+            {/* <div className="alert alert-warning">
+              <pre className="text-xs text-left">
+                {JSON.stringify({
+                  isPending: isSessionPending,
+                  role: session?.user?.role,
+                  hasAdminPrivilege: hasAdminPrivilege
+                }, null, 2)}
+              </pre>
+            </div> */}
+            {/* End debug */}
             {hasAdminPrivilege === true && (
               <button
                 className="btn btn-primary btn-circle"

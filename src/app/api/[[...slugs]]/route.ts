@@ -17,6 +17,8 @@ import { roomsRouter } from "./rooms";
 import { feedbacksRouter } from "./feedbacks";
 import { eventsRouter } from "./event";
 import { membershipsRouter } from "./memberships";
+import { trainersRouter } from "./trainers";
+import { staffRouter } from "./staff";
 
 const app = new Elysia({ prefix: "/api" })
   .use(
@@ -34,6 +36,31 @@ const app = new Elysia({ prefix: "/api" })
   .use(feedbacksRouter)
   .use(eventsRouter)
   .use(membershipsRouter)
+  .use(trainersRouter)
+  .use(staffRouter)
+  .get("/admin/users", async ({ request }) => {
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    });
+
+    if (!session || session.user.role !== "admin") {
+      throw new Error("Unauthorized");
+    }
+
+    const users = await db
+      .collection("user")
+      .find({})
+      .sort({ createdAt: -1 })
+      .toArray();
+
+    return users.map((u: any) => ({
+      _id: u._id.toString(),
+      name: u.name,
+      email: u.email,
+      role: u.role,
+      createdAt: u.createdAt,
+    }));
+  })
   .post(
     "/avatar/upload",
     async ({ body, request }) => {
