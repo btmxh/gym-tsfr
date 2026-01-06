@@ -4,7 +4,7 @@ import { z } from "zod";
 import Elysia from "elysia";
 import { ObjectId } from "mongodb";
 import { Equipment, EquipmentWithId } from "@/lib/gym/equipment";
-import { checkPerm, unauthorized } from "./perms";
+import { checkPerm } from "./perms";
 import { t as translate } from "@/lib/i18n-server";
 
 export const roomsRouter = new Elysia({ prefix: "/rooms" })

@@ -5,10 +5,10 @@ type Messages = {
     errors: Record<string, string>;
     success: Record<string, string>;
   };
-  [key: string]: any;
+  [key: string]: Record<string, unknown>;
 };
 
-let cachedMessages: { [locale: string]: Messages } = {};
+const cachedMessages: { [locale: string]: Messages } = {};
 
 /**
  * Get messages for the current locale
@@ -32,10 +32,10 @@ export async function t(keyPath: string): Promise<string> {
   const messages = await getMessages();
   const keys = keyPath.split(".");
   
-  let value: any = messages;
+  let value: unknown = messages;
   for (const key of keys) {
     if (value && typeof value === "object" && key in value) {
-      value = value[key];
+      value = (value as Record<string, unknown>)[key];
     } else {
       return keyPath; // Return key if translation not found
     }
@@ -47,18 +47,18 @@ export async function t(keyPath: string): Promise<string> {
 /**
  * Get translation namespace (useful for getting multiple related translations)
  */
-export async function getNamespace(namespace: string): Promise<Record<string, any>> {
+export async function getNamespace(namespace: string): Promise<Record<string, unknown>> {
   const messages = await getMessages();
   const keys = namespace.split(".");
   
-  let value: any = messages;
+  let value: unknown = messages;
   for (const key of keys) {
     if (value && typeof value === "object" && key in value) {
-      value = value[key];
+      value = (value as Record<string, unknown>)[key];
     } else {
       return {};
     }
   }
   
-  return value || {};
+  return (value && typeof value === "object" ? value : {}) as Record<string, unknown>;
 }

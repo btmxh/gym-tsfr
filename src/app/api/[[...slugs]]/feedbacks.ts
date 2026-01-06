@@ -1,14 +1,12 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import {
-  Feedback,
   FeedbackWithAuthorAndId,
-  FeedbackWithId,
 } from "@/lib/gym/feedback";
 import Elysia from "elysia";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
-import { checkPerm, unauthorized } from "./perms";
+import { checkPerm } from "./perms";
 import { t as translate } from "@/lib/i18n-server";
 
 type SseClient = {
