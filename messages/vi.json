@@ -150,6 +150,177 @@
     "receiptNo": "Mã biên lai",
     "goToDashboard": "Về Trang Chính"
   },
+  "Navigation": {
+    "dashboard": "Trang chủ",
+    "rooms": "Phòng tập",
+    "trainers": "Huấn luyện viên",
+    "memberships": "Gói thành viên",
+    "feedbacks": "Phản hồi",
+    "admin": "Quản trị",
+    "profile": "Xem hồ sơ của tôi",
+    "myTrainerProfile": "Hồ sơ huấn luyện viên",
+    "signOut": "Đăng xuất",
+    "signIn": "Đăng nhập",
+    "hi": "Xin chào, {name}"
+  },
+  "Auth": {
+    "login": {
+      "title": "Chào mừng trở lại!",
+      "subtitle": "Vui lòng đăng nhập vào tài khoản của bạn để tiếp tục.",
+      "email": "Email",
+      "emailPlaceholder": "Nhập email của bạn",
+      "password": "Mật khẩu",
+      "passwordPlaceholder": "Nhập mật khẩu của bạn",
+      "forgotPassword": "Quên mật khẩu?",
+      "signIn": "Đăng nhập",
+      "noAccount": "Chưa có tài khoản?",
+      "signUpToday": "Đăng ký ngay!",
+      "or": "Hoặc"
+    },
+    "register": {
+      "title": "Tạo tài khoản",
+      "subtitle": "Tham gia cùng chúng tôi và bắt đầu hành trình thể dục của bạn ngay hôm nay!",
+      "email": "Email",
+      "emailPlaceholder": "Nhập email của bạn",
+      "name": "Họ và tên",
+      "namePlaceholder": "Nhập họ tên đầy đủ",
+      "phone": "Số điện thoại",
+      "phonePlaceholder": "Nhập số điện thoại của bạn",
+      "password": "Mật khẩu",
+      "passwordPlaceholder": "Nhập mật khẩu của bạn",
+      "confirmPassword": "Xác nhận mật khẩu",
+      "signUp": "Đăng ký",
+      "hasAccount": "Đã có tài khoản?",
+      "signInNow": "Đăng nhập ngay!",
+      "or": "Hoặc"
+    },
+    "forgotPassword": {
+      "title": "Quên mật khẩu",
+      "subtitle": "Nhập email của bạn để nhận liên kết đặt lại mật khẩu.",
+      "email": "Email",
+      "emailPlaceholder": "Nhập email của bạn",
+      "sendResetLink": "Gửi liên kết đặt lại",
+      "backToLogin": "Quay lại đăng nhập"
+    },
+    "resetPassword": {
+      "title": "Đặt lại mật khẩu",
+      "subtitle": "Nhập mật khẩu mới của bạn bên dưới.",
+      "password": "Mật khẩu mới",
+      "passwordPlaceholder": "Nhập mật khẩu của bạn",
+      "confirmPassword": "Xác nhận mật khẩu",
+      "resetPassword": "Đặt lại mật khẩu"
+    },
+    "validation": {
+      "emailRequired": "Yêu cầu nhập email",
+      "emailInvalid": "Phải là địa chỉ email hợp lệ",
+      "passwordRequired": "Yêu cầu nhập mật khẩu",
+      "passwordMinLength": "Mật khẩu phải có ít nhất 8 ký tự",
+      "passwordsNoMatch": "Mật khẩu không khớp",
+      "nameRequired": "Yêu cầu nhập tên",
+      "nameMinLength": "Tên phải có ít nhất 2 ký tự",
+      "phoneRequired": "Yêu cầu nhập số điện thoại"
+    }
+  },
+  "Trainers": {
+    "sessionSchedule": {
+      "title": "Lên lịch buổi tập",
+      "date": "Ngày tập",
+      "dateRequired": "Yêu cầu nhập ngày",
+      "duration": "Thời lượng (phút)",
+      "durationRequired": "Yêu cầu nhập thời lượng",
+      "exercises": "Bài tập",
+      "addExercise": "Thêm bài tập",
+      "exerciseName": "Tên bài tập",
+      "exerciseNameRequired": "Yêu cầu nhập tên bài tập",
+      "sets": "Hiệp",
+      "setsRequired": "Yêu cầu nhập số hiệp",
+      "reps": "Lần lặp",
+      "repsRequired": "Yêu cầu nhập số lần",
+      "weight": "Trọng lượng (kg)",
+      "weightOptional": "Tùy chọn",
+      "notes": "Ghi chú",
+      "notesPlaceholder": "Ghi chú tùy chọn",
+      "scheduleSession": "Lên lịch buổi tập"
+    },
+    "completeSession": {
+      "title": "Hoàn thành buổi tập",
+      "sessionNotes": "Ghi chú buổi tập",
+      "sessionNotesRequired": "Vui lòng cung cấp ghi chú buổi tập",
+      "sessionNotesPlaceholder": "Buổi tập diễn ra như thế nào? Có nhận xét hoặc khuyến nghị nào không?",
+      "exercises": "Hiệu suất bài tập",
+      "actualSets": "Số hiệp thực tế",
+      "actualReps": "Số lần thực tế",
+      "actualWeight": "Trọng lượng (kg)",
+      "required": "Bắt buộc",
+      "performanceNotes": "Ghi chú",
+      "performanceNotesPlaceholder": "Vấn đề về tư thế, độ khó, v.v.",
+      "completeSession": "Hoàn thành buổi tập"
+    },
+    "sessionFeedback": {
+      "title": "Phản hồi buổi tập",
+      "rating": "Đánh giá",
+      "ratingRequired": "Yêu cầu đánh giá",
+      "feedback": "Phản hồi",
+      "feedbackRequired": "Vui lòng cung cấp phản hồi",
+      "feedbackPlaceholder": "Chia sẻ trải nghiệm của bạn với buổi tập này...",
+      "submitFeedback": "Gửi phản hồi"
+    },
+    "trainerCard": {
+      "trainer": "Huấn luyện viên",
+      "viewProfile": "Xem hồ sơ"
+    },
+    "requestTrainer": {
+      "title": "Yêu cầu huấn luyện viên",
+      "notes": "Ghi chú",
+      "notesPlaceholder": "Nói với huấn luyện viên về mục tiêu thể dục của bạn...",
+      "sendRequest": "Gửi yêu cầu"
+    },
+    "trainerProfile": {
+      "daysOfWeek": {
+        "sunday": "Chủ Nhật",
+        "monday": "Thứ Hai",
+        "tuesday": "Thứ Ba",
+        "wednesday": "Thứ Tư",
+        "thursday": "Thứ Năm",
+        "friday": "Thứ Sáu",
+        "saturday": "Thứ Bảy"
+      },
+      "specialization": "Chuyên môn",
+      "specializationRequired": "Vui lòng chọn ít nhất một chuyên môn",
+      "bio": "Tiểu sử",
+      "bioRequired": "Yêu cầu nhập tiểu sử",
+      "bioPlaceholder": "Tôi là một huấn luyện viên thể dục đam mê với chuyên môn về...",
+      "certifications": "Chứng chỉ",
+      "certificationsRequired": "Vui lòng thêm ít nhất một chứng chỉ",
+      "experience": "Số năm kinh nghiệm",
+      "experienceRequired": "Yêu cầu nhập kinh nghiệm",
+      "availability": "Lịch làm việc",
+      "availabilityRequired": "Bắt buộc",
+      "maxClients": "Số học viên tối đa",
+      "saveProfile": "Lưu hồ sơ"
+    }
+  },
+  "Common": {
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "success": "Thành công",
+    "cancel": "Hủy",
+    "save": "Lưu",
+    "delete": "Xóa",
+    "edit": "Chỉnh sửa",
+    "add": "Thêm",
+    "remove": "Xóa",
+    "submit": "Gửi",
+    "search": "Tìm kiếm",
+    "filter": "Lọc",
+    "back": "Quay lại",
+    "next": "Tiếp theo",
+    "previous": "Trước",
+    "confirm": "Xác nhận",
+    "close": "Đóng",
+    "optional": "Tùy chọn",
+    "required": "Bắt buộc"
+  },
   "API": {
     "errors": {
       "unauthorized": "Không có quyền truy cập",

@@ -150,6 +150,177 @@
     "receiptNo": "Receipt no.",
     "goToDashboard": "Go to Dashboard"
   },
+  "Navigation": {
+    "dashboard": "Dashboard",
+    "rooms": "Rooms",
+    "trainers": "Trainers",
+    "memberships": "Memberships",
+    "feedbacks": "Feedbacks",
+    "admin": "Admin",
+    "profile": "View my profile",
+    "myTrainerProfile": "My Trainer Profile",
+    "signOut": "Sign out",
+    "signIn": "Sign in",
+    "hi": "Hi, {name}"
+  },
+  "Auth": {
+    "login": {
+      "title": "Welcome back!",
+      "subtitle": "Please log in to your account to proceed.",
+      "email": "Email",
+      "emailPlaceholder": "Your email here",
+      "password": "Password",
+      "passwordPlaceholder": "Your password here",
+      "forgotPassword": "Forgot password?",
+      "signIn": "Sign in",
+      "noAccount": "Doesn't have an account?",
+      "signUpToday": "Sign up today!",
+      "or": "Or"
+    },
+    "register": {
+      "title": "Create an account",
+      "subtitle": "Join us and start your fitness journey today!",
+      "email": "Email",
+      "emailPlaceholder": "Your email here",
+      "name": "Full Name",
+      "namePlaceholder": "Your full name here",
+      "phone": "Phone Number",
+      "phonePlaceholder": "Your phone number here",
+      "password": "Password",
+      "passwordPlaceholder": "Your password here",
+      "confirmPassword": "Confirm Password",
+      "signUp": "Sign up",
+      "hasAccount": "Already have an account?",
+      "signInNow": "Sign in now!",
+      "or": "Or"
+    },
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "subtitle": "Enter your email to receive a password reset link.",
+      "email": "Email",
+      "emailPlaceholder": "Your email here",
+      "sendResetLink": "Send Reset Link",
+      "backToLogin": "Back to Login"
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "subtitle": "Enter your new password below.",
+      "password": "New Password",
+      "passwordPlaceholder": "Your password here",
+      "confirmPassword": "Confirm Password",
+      "resetPassword": "Reset Password"
+    },
+    "validation": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Must be a valid email address",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must have at least 8 characters",
+      "passwordsNoMatch": "Passwords do not match",
+      "nameRequired": "Name is required",
+      "nameMinLength": "Name must have at least 2 characters",
+      "phoneRequired": "Your phone number is required"
+    }
+  },
+  "Trainers": {
+    "sessionSchedule": {
+      "title": "Schedule Session",
+      "date": "Session Date",
+      "dateRequired": "Date is required",
+      "duration": "Duration (minutes)",
+      "durationRequired": "Duration is required",
+      "exercises": "Exercises",
+      "addExercise": "Add Exercise",
+      "exerciseName": "Exercise Name",
+      "exerciseNameRequired": "Exercise name is required",
+      "sets": "Sets",
+      "setsRequired": "Sets required",
+      "reps": "Reps",
+      "repsRequired": "Reps required",
+      "weight": "Weight (kg)",
+      "weightOptional": "Optional",
+      "notes": "Notes",
+      "notesPlaceholder": "Optional notes",
+      "scheduleSession": "Schedule Session"
+    },
+    "completeSession": {
+      "title": "Complete Session",
+      "sessionNotes": "Session Notes",
+      "sessionNotesRequired": "Please provide session notes",
+      "sessionNotesPlaceholder": "How did the session go? Any observations or recommendations?",
+      "exercises": "Exercise Performance",
+      "actualSets": "Actual Sets",
+      "actualReps": "Actual Reps",
+      "actualWeight": "Weight (kg)",
+      "required": "Required",
+      "performanceNotes": "Notes",
+      "performanceNotesPlaceholder": "Form issues, difficulty, etc.",
+      "completeSession": "Complete Session"
+    },
+    "sessionFeedback": {
+      "title": "Session Feedback",
+      "rating": "Rating",
+      "ratingRequired": "Rating is required",
+      "feedback": "Feedback",
+      "feedbackRequired": "Please provide feedback",
+      "feedbackPlaceholder": "Share your experience with this training session...",
+      "submitFeedback": "Submit Feedback"
+    },
+    "trainerCard": {
+      "trainer": "Trainer",
+      "viewProfile": "View Profile"
+    },
+    "requestTrainer": {
+      "title": "Request Trainer",
+      "notes": "Notes",
+      "notesPlaceholder": "Tell the trainer about your fitness goals...",
+      "sendRequest": "Send Request"
+    },
+    "trainerProfile": {
+      "daysOfWeek": {
+        "sunday": "Sunday",
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday"
+      },
+      "specialization": "Specialization",
+      "specializationRequired": "Please select at least one specialization",
+      "bio": "Bio",
+      "bioRequired": "Bio is required",
+      "bioPlaceholder": "I'm a passionate fitness trainer with expertise in...",
+      "certifications": "Certifications",
+      "certificationsRequired": "Please add at least one certification",
+      "experience": "Years of Experience",
+      "experienceRequired": "Experience is required",
+      "availability": "Availability",
+      "availabilityRequired": "Required",
+      "maxClients": "Max Clients",
+      "saveProfile": "Save Profile"
+    }
+  },
+  "Common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "remove": "Remove",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "confirm": "Confirm",
+    "close": "Close",
+    "optional": "Optional",
+    "required": "Required"
+  },
   "API": {
     "errors": {
       "unauthorized": "Unauthorized",
