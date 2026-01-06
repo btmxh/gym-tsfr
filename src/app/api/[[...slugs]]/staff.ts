@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { checkPerm, unauthorized } from "./perms";
+import { t as translate } from "@/lib/i18n-server";
 
 export const staffRouter = new Elysia({ prefix: "/staff" })
   
@@ -13,7 +14,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
     const session = await auth.api.getSession({ headers: request.headers });
     if (!session || (session.user.role !== "admin" && session.user.role !== "staff")) {
       set.status = 403;
-      return { message: "Unauthorized" };
+      return { message: await translate("API.errors.unauthorized") };
     }
     
     const staff = await db
@@ -41,7 +42,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
     const session = await auth.api.getSession({ headers: request.headers });
     if (!session || (session.user.role !== "admin" && session.user.role !== "staff")) {
       set.status = 403;
-      return { message: "Unauthorized" };
+      return { message: await translate("API.errors.unauthorized") };
     }
     
     const staff = await db
@@ -62,7 +63,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
     
     if (staff.length === 0) {
       set.status = 404;
-      return { message: "Staff not found" };
+      return { message: await translate("API.errors.staffNotFound") };
     }
     
     return staff[0];
@@ -75,7 +76,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
       const session = await auth.api.getSession({ headers: request.headers });
       if (!session || session.user.role !== "admin") {
         set.status = 403;
-        return { message: "Unauthorized" };
+        return { message: await translate("API.errors.unauthorized") };
       }
       
       // Check if user exists
@@ -85,7 +86,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
       
       if (!user) {
         set.status = 404;
-        return { message: "User not found" };
+        return { message: await translate("API.errors.userNotFound") };
       }
       
       // Check if staff profile already exists
@@ -95,7 +96,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
       
       if (existing) {
         set.status = 400;
-        return { message: "Staff profile already exists" };
+        return { message: await translate("API.errors.staffProfileExists") };
       }
       
       const now = new Date();
@@ -125,7 +126,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
           { $set: { role: body.role, updatedAt: now } }
         );
       
-      return { message: "Staff created successfully" };
+      return { message: await translate("API.success.staffCreated") };
     },
     {
       body: t.Object({
@@ -154,7 +155,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
       const session = await auth.api.getSession({ headers: request.headers });
       if (!session || session.user.role !== "admin") {
         set.status = 403;
-        return { message: "Unauthorized" };
+        return { message: await translate("API.errors.unauthorized") };
       }
       
       const updateData: any = {
@@ -175,7 +176,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
           { $set: updateData }
         );
       
-      return { message: "Staff updated successfully" };
+      return { message: await translate("API.success.staffUpdated") };
     },
     {
       body: t.Object({
@@ -206,7 +207,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
     const session = await auth.api.getSession({ headers: request.headers });
     if (!session) {
       set.status = 401;
-      return { message: "Unauthorized" };
+      return { message: await translate("API.errors.unauthorized") };
     }
     
     const staff = await db
@@ -215,7 +216,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
     
     if (!staff) {
       set.status = 403;
-      return { message: "Not a staff member" };
+      return { message: await translate("API.errors.notStaffMember") };
     }
     
     const today = new Date();
@@ -231,7 +232,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
     
     if (existing) {
       set.status = 400;
-      return { message: "Already checked in" };
+      return { message: await translate("API.errors.alreadyCheckedIn") };
     }
     
     const now = new Date();
@@ -245,7 +246,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
       createdAt: now,
     });
     
-    return { message: "Check-in successful", time: now };
+    return { message: await translate("API.success.checkInSuccess"), time: now };
   })
   
   // Check out
@@ -253,7 +254,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
     const session = await auth.api.getSession({ headers: request.headers });
     if (!session) {
       set.status = 401;
-      return { message: "Unauthorized" };
+      return { message: await translate("API.errors.unauthorized") };
     }
     
     const staff = await db
@@ -262,7 +263,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
     
     if (!staff) {
       set.status = 403;
-      return { message: "Not a staff member" };
+      return { message: await translate("API.errors.notStaffMember") };
     }
     
     const today = new Date();
@@ -278,7 +279,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
     
     if (!attendance) {
       set.status = 400;
-      return { message: "No active check-in found" };
+      return { message: await translate("API.errors.noActiveCheckIn") };
     }
     
     const now = new Date();
@@ -296,7 +297,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
         }
       );
     
-    return { message: "Check-out successful", time: now, hours: Math.round(hours * 100) / 100 };
+    return { message: await translate("API.success.checkOutSuccess"), time: now, hours: Math.round(hours * 100) / 100 };
   })
   
   // Get my attendance
@@ -304,7 +305,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
     const session = await auth.api.getSession({ headers: request.headers });
     if (!session) {
       set.status = 401;
-      return { message: "Unauthorized" };
+      return { message: await translate("API.errors.unauthorized") };
     }
     
     const staff = await db
@@ -313,7 +314,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
     
     if (!staff) {
       set.status = 403;
-      return { message: "Not a staff member" };
+      return { message: await translate("API.errors.notStaffMember") };
     }
     
     const attendance = await db
@@ -331,7 +332,7 @@ export const staffRouter = new Elysia({ prefix: "/staff" })
     const session = await auth.api.getSession({ headers: request.headers });
     if (!session || session.user.role !== "admin") {
       set.status = 403;
-      return { message: "Unauthorized" };
+      return { message: await translate("API.errors.unauthorized") };
     }
     
     const filter: any = {};
