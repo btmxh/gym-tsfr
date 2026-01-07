@@ -14,7 +14,15 @@
     {
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
+          # runtime
           bun
+
+          # devenv
+          eslint
+          prettier
+          vscode-langservers-extracted
+          typescript-language-server
+          tailwindcss-language-server
         ];
       };
     };
