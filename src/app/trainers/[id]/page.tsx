@@ -153,7 +153,7 @@ export default function TrainerDetailPage() {
               <div className="card-body">
                 <h2 className="card-title">Availability</h2>
                 <div className="space-y-2">
-                  {trainer.availability.map((slot: { day: number; startTime: string; endTime: string }, idx: number) => (
+                  {trainer.availability.map((slot: { dayOfWeek: number; startTime: string; endTime: string }, idx: number) => (
                     <div
                       key={idx}
                       className="flex justify-between items-center p-3 bg-base-200 rounded"
