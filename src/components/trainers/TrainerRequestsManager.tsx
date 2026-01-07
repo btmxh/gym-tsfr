@@ -27,7 +27,23 @@ export default function TrainerRequestsManager() {
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState<string | null>(null);
 
-  const normalizeRequest = (raw: any): PendingRequest => {
+  const normalizeRequest = (raw: {
+    _id?: string;
+    memberId?: string;
+    trainerId?: string;
+    startDate?: string;
+    status?: string;
+    notes?: string | null;
+    createdAt?: string;
+    member?: {
+      id?: string;
+      _id?: string;
+      name?: string;
+      email?: string;
+      image?: string | null;
+      memberCode?: string | null;
+    };
+  }): PendingRequest => {
     const member = raw?.member
       ? {
           id: String(raw.member.id ?? raw.member._id ?? ""),
@@ -44,7 +60,7 @@ export default function TrainerRequestsManager() {
       trainerId: String(raw?.trainerId ?? ""),
       startDate: String(raw?.startDate ?? ""),
       status: String(raw?.status ?? ""),
-      notes: raw?.notes ?? null,
+      notes: ("notes" in raw && raw.notes !== undefined) ? raw.notes : null,
       createdAt: String(raw?.createdAt ?? ""),
       member,
     };
@@ -59,7 +75,7 @@ export default function TrainerRequestsManager() {
         const message =
           typeof response.error.value === "string"
             ? response.error.value
-            : (response.error.value as any)?.message;
+            : (response.error.value as { message?: string })?.message;
         console.error("API error fetching requests:", response.error, "Status:", response.status);
         
         // Don't show error toast for "Trainer profile not found" - handle it gracefully
