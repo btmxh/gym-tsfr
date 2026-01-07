@@ -138,7 +138,7 @@ export function MyPlan() {
                 </tr>
               </thead>
               <tbody>
-                {data.payments.map((p: any) => (
+                {data.payments.map((p: { _id: string; receiptNo: string; amount: number; method: string; paidAt: Date | string }) => (
                   <tr key={p._id}>
                     <td className="font-mono">{p.receiptNo}</td>
                     <td>{formatMoney(p.amount)}</td>

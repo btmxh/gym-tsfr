@@ -109,7 +109,7 @@ export default function TrainerRequestsManager() {
         const message =
           typeof response.error.value === "string"
             ? response.error.value
-            : (response.error.value as any)?.message;
+            : (response.error.value as { message?: string })?.message;
         toast({ message: message || "Failed to accept request", type: "error" });
         return;
       }
@@ -136,7 +136,7 @@ export default function TrainerRequestsManager() {
         const message =
           typeof response.error.value === "string"
             ? response.error.value
-            : (response.error.value as any)?.message;
+            : (response.error.value as { message?: string })?.message;
         toast({ message: message || "Failed to reject request", type: "error" });
         return;
       }
