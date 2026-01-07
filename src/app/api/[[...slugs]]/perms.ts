@@ -5,6 +5,7 @@ import { status as elysiaStatus } from "elysia";
 type RoomPerm = (typeof statement)["rooms"][number];
 type EquipmentPerm = (typeof statement)["equipments"][number];
 type FeedbackPerm = (typeof statement)["feedbacks"][number];
+type EventPerm = (typeof statement)["events"][number];
 
 // undefined: no session or no permission
 // null: no session, but still authorized as guest
@@ -16,6 +17,7 @@ export const checkPerm = async (
     rooms?: RoomPerm[];
     equipments?: EquipmentPerm[];
     feedbacks?: FeedbackPerm[];
+    events?: EventPerm[];
   },
 ) => {
   const session = await auth.api.getSession({ headers });
@@ -30,20 +32,22 @@ export const checkPerm = async (
     },
   });
 
-  if (session === undefined) unauthorized(status);
-  else forbidden(status);
+  if (!hasPerm) {
+    if (session === undefined) unauthorized(status);
+    else forbidden(status);
+  }
 
-  return hasPerm ? session : undefined;
+  return session;
 };
 
 export const unauthorized = (status: typeof elysiaStatus) => {
-  return status(401, {
+  throw status(401, {
     message: "Unauthorized",
   });
 };
 
 export const forbidden = (status: typeof elysiaStatus) => {
-  return status(403, {
+  throw status(403, {
     message: "Forbidden",
   });
 };

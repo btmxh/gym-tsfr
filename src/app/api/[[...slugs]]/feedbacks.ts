@@ -20,10 +20,9 @@ export const feedbacksRouter = new Elysia({ prefix: "/feedbacks" })
   .post(
     "/new",
     async ({ body: { title, body }, status, request: { headers } }) => {
-      const session = await checkPerm(headers, status, {
+      const session = (await checkPerm(headers, status, {
         feedbacks: ["create"],
-      });
-      if (!session) return;
+      }))!;
       const isMemberFeedback = session.user.role?.includes("user") ?? false;
       const now = new Date();
 
@@ -68,10 +67,9 @@ export const feedbacksRouter = new Elysia({ prefix: "/feedbacks" })
       status,
       request: { headers },
     }) => {
-      const session = await checkPerm(headers, status, {
+      const session = (await checkPerm(headers, status, {
         feedbacks: ["create"],
-      });
-      if (!session) return;
+      }))!;
       const isMemberFeedback = session.user.role === "member";
       const now = new Date();
 
@@ -109,11 +107,7 @@ export const feedbacksRouter = new Elysia({ prefix: "/feedbacks" })
   .get(
     "/list",
     async ({ request: { headers }, query: { offset, limit }, status }) => {
-      if (
-        (await checkPerm(headers, status, { feedbacks: ["read"] })) ===
-        undefined
-      )
-        return;
+      await checkPerm(headers, status, { feedbacks: ["read"] });
       const data = await db
         .collection("feedbacks")
         .aggregate<FeedbackWithAuthorAndId>([
@@ -170,10 +164,7 @@ export const feedbacksRouter = new Elysia({ prefix: "/feedbacks" })
     },
   )
   .get("/:id", async ({ params: { id }, request: { headers }, status }) => {
-    if (
-      (await checkPerm(headers, status, { feedbacks: ["read"] })) === undefined
-    )
-      return;
+    await checkPerm(headers, status, { feedbacks: ["read"] });
     const feedbacks = await db
       .collection("feedbacks")
       .aggregate<FeedbackWithAuthorAndId>([
