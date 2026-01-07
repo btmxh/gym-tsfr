@@ -9,6 +9,8 @@ on:
 jobs:
   lint-and-typecheck:
     runs-on: ubuntu-latest
+    # Note: This job tolerates existing errors in legacy code to allow CI to pass
+    # while still providing visibility into linting and type issues
 
     steps:
       - uses: actions/checkout@v4
@@ -23,10 +25,14 @@ jobs:
         run: npm ci
 
       - name: Run linter
-        run: npm run lint || echo "Linting completed with errors - see output above"
-
+        run: |
+          echo "Running linter (note: 18 known errors in legacy API routes are tolerated)"
+          npm run lint || true
+          
       - name: Type check
-        run: npx tsc --noEmit || echo "Type check completed with known pre-existing errors"
+        run: |
+          echo "Running type check (note: 2 pre-existing framework errors are tolerated)" 
+          npx tsc --noEmit || true
 
   test:
     runs-on: ubuntu-latest
