@@ -2,7 +2,7 @@ import { Elysia, t } from "elysia";
 import { ObjectId } from "mongodb";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { checkPerm, unauthorized } from "./perms";
+import { unauthorized } from "./perms";
 
 export const staffRouter = new Elysia({ prefix: "/staff" })
   

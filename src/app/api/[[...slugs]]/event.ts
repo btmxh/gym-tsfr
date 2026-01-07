@@ -1,11 +1,10 @@
 import { auth } from "@/lib/auth";
 import Elysia from "elysia";
 import { checkPerm, unauthorized } from "./perms";
-import { createHmac, randomBytes } from "crypto";
-import { QRCODE_TIMEOUT, QRPayload, QRSigner } from "@/lib/qr";
+import { QRSigner } from "@/lib/qr";
 import z from "zod";
 import { db } from "@/lib/db";
-import { EventWithDetails, EventWithId } from "@/lib/event";
+import { EventWithDetails } from "@/lib/event";
 import { ObjectId } from "mongodb";
 
 type SseClient = {
