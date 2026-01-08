@@ -18,7 +18,7 @@ export const trainersRouter = new Elysia({ prefix: "/trainers" })
     async ({ query }) => {
       const { specialization } = query;
 
-      const filter: any = { isActive: true };
+      const filter: Record<string, unknown> = { isActive: true };
       if (specialization) {
         filter.specialization = specialization;
       }

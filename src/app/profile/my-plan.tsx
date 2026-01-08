@@ -5,6 +5,25 @@ import { useRouter } from "@/i18n/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 
+type Membership = {
+  _id: string;
+  userId: string;
+  packageId: string;
+  startDate: Date | string;
+  endDate: Date | string;
+  status: string;
+  createdAt: Date | string;
+};
+
+type Package = {
+  _id: string;
+  name: string;
+  description?: string;
+  price: number;
+  duration: number;
+  features: string[];
+};
+
 function formatMoney(price: number) {
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -12,7 +31,7 @@ function formatMoney(price: number) {
   }).format(price);
 }
 
-function formatDateTime(value: any) {
+function formatDateTime(value: Date | string | number) {
   const d = value instanceof Date ? value : new Date(value);
   return new Intl.DateTimeFormat("vi-VN", {
     year: "numeric",
@@ -52,8 +71,8 @@ export function MyPlan() {
     );
   }
 
-  const membership = data.membership as any;
-  const pkg = data.package as any;
+  const membership = data.membership as Membership;
+  const pkg = data.package as Package;
 
   if (!membership || !pkg) {
     return (
@@ -119,7 +138,7 @@ export function MyPlan() {
                 </tr>
               </thead>
               <tbody>
-                {data.payments.map((p: any) => (
+                {data.payments.map((p: { _id: string; receiptNo: string; amount: number; method: string; paidAt: Date | string }) => (
                   <tr key={p._id}>
                     <td className="font-mono">{p.receiptNo}</td>
                     <td>{formatMoney(p.amount)}</td>
