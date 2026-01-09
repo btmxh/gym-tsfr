@@ -29,24 +29,22 @@ export default function TrainerRequestsManager() {
 
   const normalizeRequest = (raw: {
     _id?: string;
-    memberId?: string;
     trainerId?: string;
     startDate?: string;
     status?: string;
     notes?: string | null;
     createdAt?: string;
-    member?: {
-      id?: string;
+    member: {
       _id?: string;
       name?: string;
       email?: string;
       image?: string | null;
       memberCode?: string | null;
-    };
+    } | null;
   }): PendingRequest => {
     const member = raw?.member
       ? {
-          id: String(raw.member.id ?? raw.member._id ?? ""),
+          id: String(raw.member._id ?? raw.member._id ?? ""),
           name: String(raw.member.name ?? ""),
           email: String(raw.member.email ?? ""),
           image: raw.member.image ?? null,
@@ -56,7 +54,7 @@ export default function TrainerRequestsManager() {
 
     return {
       _id: String(raw?._id ?? ""),
-      memberId: String(raw?.memberId ?? ""),
+      memberId: String(raw?.member?._id ?? ""),
       trainerId: String(raw?.trainerId ?? ""),
       startDate: String(raw?.startDate ?? ""),
       status: String(raw?.status ?? ""),

@@ -1,8 +1,6 @@
-import { ObjectId } from "mongodb";
-
 // profile cho coach
-export type TrainerProfile = {
-    userId: ObjectId;
+export type TrainerProfile<IdType = string> = {
+    userId: IdType;
     specialization: string[];
     bio: string;
     certifications: string[];
@@ -18,17 +16,16 @@ export type TrainerProfile = {
     updatedAt: Date;
 }
 
-export type TrainerProfileWithId = TrainerProfile & {
-    _id: ObjectId;
+export type TrainerProfileWithId<IdType = string> = TrainerProfile<IdType> & {
+    _id: IdType;
 }
 
 // phan cong coach cho member nao
-export type TrainerAssignment = {
-    trainerId: ObjectId;
-    memberId: ObjectId;
-    membershipId: ObjectId;
-    packageId: ObjectId;
-
+export type TrainerAssignment<IdType = string> = {
+    trainerId: IdType;
+    memberId: IdType;
+    membershipId: IdType;
+    packageId: IdType;
     startDate: Date;
     endDate: Date | null;
     totalSessions: number;
@@ -41,15 +38,15 @@ export type TrainerAssignment = {
     updatedAt: Date;
 }
 
-export type TrainerAssignmentWithId = TrainerAssignment & {
-    _id: ObjectId;
+export type TrainerAssignmentWithId<IdType = string> = TrainerAssignment<IdType> & {
+    _id: IdType;
 }
 
 // data cho 1 session training
-export type TrainingSession = {
-    assignmentId: ObjectId;
-    trainerId: ObjectId;
-    memberId: ObjectId;
+export type TrainingSession<IdType = string> = {
+    assignmentId: IdType;
+    trainerId: IdType;
+    memberId: IdType;
 
     sessionDate: Date;
     duration: number; // phut
@@ -70,6 +67,6 @@ export type TrainingSession = {
     updatedAt: Date;
 }
 
-export type TrainingSessionWithId = TrainingSession & {
-    _id: ObjectId;
+export type TrainingSessionWithId<IdType = string> = TrainingSession<IdType> & {
+    _id: IdType;
 }

@@ -9,8 +9,10 @@ type Membership = {
   _id: string;
   userId: string;
   packageId: string;
-  startDate: Date | string;
-  endDate: Date | string;
+  kind: string;
+  sessionsRemaining?: number;
+  startAt: Date | string;
+  endAt: Date | string;
   status: string;
   createdAt: Date | string;
 };
