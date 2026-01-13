@@ -6,6 +6,7 @@ import Elysia from "elysia";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
 import { checkPerm } from "./perms";
+import { t as translate } from "@/lib/i18n-server";
 
 type SseClient = {
   send: () => void;
@@ -42,7 +43,7 @@ export const feedbacksRouter = new Elysia({ prefix: "/feedbacks" })
           { $set: { threadId: feedbackResult.insertedId } },
         );
       if (updateIdResult.modifiedCount === 0) {
-        return status(500, { message: "Failed to set threadId" });
+        return status(500, { message: await translate("API.errors.failedToSetThreadId") });
       }
 
       return {

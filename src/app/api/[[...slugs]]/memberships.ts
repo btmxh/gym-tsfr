@@ -5,6 +5,7 @@ import { randomBytes } from "crypto";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { unauthorized } from "./perms";
+import { t as translate } from "@/lib/i18n-server";
 import { Package, PackageWithId } from "@/lib/gym/package";
 import { Payment, PaymentWithId } from "@/lib/gym/trainer";
 
@@ -243,11 +244,11 @@ export const membershipsRouter = new Elysia({ prefix: "/memberships" })
 
       if (!pkg) {
         status(404);
-        return { message: "Package not found" };
+        return { message: await translate("API.errors.packageNotFound") };
       }
       if (pkg.isActive !== true) {
         status(400);
-        return { message: "Package is inactive" };
+        return { message: await translate("API.errors.packageInactive") };
       }
 
       const memberCode = await ensureMemberCode(userId);
@@ -257,8 +258,8 @@ export const membershipsRouter = new Elysia({ prefix: "/memberships" })
       const existingMembership = await findActiveMembership(userId);
       if (existingMembership) {
         status(400);
-        return {
-          message: "You already have an active membership. Use /renew to extend it."
+        return { 
+          message: await translate("API.errors.alreadyHasActiveMembership")
         };
       }
 
@@ -357,11 +358,11 @@ export const membershipsRouter = new Elysia({ prefix: "/memberships" })
 
       if (!pkg) {
         status(404);
-        return { message: "Package not found" };
+        return { message: await translate("API.errors.packageNotFound") };
       }
       if (pkg.isActive !== true) {
         status(400);
-        return { message: "Package is inactive" };
+        return { message: await translate("API.errors.packageInactive") };
       }
 
       const memberCode = await ensureMemberCode(userId);
@@ -372,8 +373,8 @@ export const membershipsRouter = new Elysia({ prefix: "/memberships" })
 
       if (!currentMembership) {
         status(400);
-        return {
-          message: "No active membership found. Use /purchase to buy a new one."
+        return { 
+          message: await translate("API.errors.noActiveMembershipToRenew")
         };
       }
 
@@ -478,7 +479,7 @@ export const membershipsRouter = new Elysia({ prefix: "/memberships" })
 
       if (!membership) {
         status(400);
-        return { message: "No active membership found" };
+        return { message: await translate("API.errors.noActiveMembership") };
       }
 
       // Check if session-based membership has sessions left
@@ -488,8 +489,8 @@ export const membershipsRouter = new Elysia({ prefix: "/memberships" })
 
         if (used >= total) {
           status(400);
-          return {
-            message: "No sessions remaining. Please renew your membership."
+          return { 
+            message: await translate("API.errors.noSessionsRemaining")
           };
         }
 
@@ -557,7 +558,7 @@ export const membershipsRouter = new Elysia({ prefix: "/memberships" })
 
       if (!checkIn) {
         status(400);
-        return { message: "No active check-in found" };
+        return { message: await translate("API.errors.noActiveCheckIn") };
       }
 
       // Calculate duration in minutes

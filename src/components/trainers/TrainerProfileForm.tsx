@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm, Controller } from "react-hook-form";
+import { useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/eden";
 import { useToast } from "@/components/toast-context";
@@ -51,7 +52,8 @@ export default function TrainerProfileForm({
   onSuccess?: () => void;
 }) {
   const toast = useToast();
-  
+  const t = useTranslations("Trainers.trainerProfile");
+
   // Fetch existing profile
   const { data: profile } = useQuery({
     queryKey: ["trainer-profile", "me"],
@@ -145,7 +147,7 @@ export default function TrainerProfileForm({
         <Controller
           name="specialization"
           control={control}
-          rules={{ required: "Please select at least one specialization" }}
+          rules={{ required: t("specializationRequired") }}
           render={({ field }) => (
             <div className="grid grid-cols-2 gap-3">
               {SPECIALIZATIONS.map((spec) => (
@@ -184,9 +186,9 @@ export default function TrainerProfileForm({
         <h3 className="text-xl font-bold text-base-content">Bio</h3>
         <p className="text-sm text-base-content/70">Tell members about yourself and your training philosophy</p>
         <textarea
-          {...register("bio", { required: "Bio is required" })}
+          {...register("bio", { required: t("bioRequired") })}
           className="textarea textarea-bordered w-full h-32 text-base"
-          placeholder="I'm a passionate fitness trainer with expertise in..."
+          placeholder={t("bioPlaceholder")}
         />
         {errors.bio && (
           <p className="text-sm text-error mt-2">
@@ -204,7 +206,7 @@ export default function TrainerProfileForm({
         <Controller
           name="certifications"
           control={control}
-          rules={{ required: "Please add at least one certification" }}
+          rules={{ required: t("certificationsRequired") }}
           render={({ field }) => (
             <textarea
               className="textarea textarea-bordered w-full h-32 text-base"
@@ -230,7 +232,7 @@ export default function TrainerProfileForm({
       {/* Experience and Settings */}
       <div className="space-y-3">
         <h3 className="text-xl font-bold text-base-content">Professional Details</h3>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Years of Experience */}
           <div className="form-control">
@@ -240,7 +242,7 @@ export default function TrainerProfileForm({
             <input
               type="number"
               {...register("yearsOfExperience", {
-                required: "Experience is required",
+                required: t("experienceRequired"),
                 min: { value: 0, message: "Must be 0 or greater" },
                 valueAsNumber: true,
               })}
@@ -261,8 +263,8 @@ export default function TrainerProfileForm({
             </label>
             <input
               type="number"
-              {...register("maxClients", { 
-                required: "Required", 
+              {...register("maxClients", {
+                required: "Required",
                 min: { value: 1, message: "Must be at least 1" },
                 valueAsNumber: true,
               })}

@@ -5,6 +5,7 @@ import Elysia from "elysia";
 import { ObjectId } from "mongodb";
 import { Equipment, EquipmentWithId } from "@/lib/gym/equipment";
 import { checkPerm } from "./perms";
+import { t as translate } from "@/lib/i18n-server";
 
 export const roomsRouter = new Elysia({ prefix: "/rooms" })
   .get("/list", async ({ status, request: { headers } }) => {
@@ -20,7 +21,7 @@ export const roomsRouter = new Elysia({ prefix: "/rooms" })
       .collection("rooms")
       .findOne({ _id: new ObjectId(id) });
     if (room === null) {
-      return status(404, { message: "Room not found" });
+      return status(404, { message: await translate("API.errors.roomNotFound") });
     }
     return { ...room, _id: room._id.toString() } as RoomWithId;
   })
@@ -78,9 +79,9 @@ export const roomsRouter = new Elysia({ prefix: "/rooms" })
       );
 
       if (result.matchedCount === 0) {
-        return status(404, { message: "Room not found" });
+        return status(404, { message: await translate("API.errors.roomNotFound") });
       }
-      return { message: "Room updated successfully" };
+      return { message: await translate("API.success.roomUpdated") };
     },
     {
       body: z.object({
@@ -119,9 +120,9 @@ export const roomsRouter = new Elysia({ prefix: "/rooms" })
       );
 
       if (result.matchedCount === 0) {
-        return status(404, { message: "Equipment not found" });
+        return status(404, { message: await translate("API.errors.equipmentNotFound") });
       }
-      return { message: "Equipment updated successfully" };
+      return { message: await translate("API.success.equipmentUpdated") };
     },
     {
       body: z.object({
@@ -143,9 +144,9 @@ export const roomsRouter = new Elysia({ prefix: "/rooms" })
       .collection("rooms")
       .deleteOne({ _id: new ObjectId(id) });
     if (result.deletedCount === 0) {
-      return status(404, { message: "Room not found" });
+      return status(404, { message: await translate("API.errors.roomNotFound") });
     }
-    return { message: "Room deleted successfully" };
+    return { message: await translate("API.success.roomDeleted") };
   })
   .delete(
     "/:id/equipments/:equipmentId",
@@ -156,9 +157,9 @@ export const roomsRouter = new Elysia({ prefix: "/rooms" })
         roomId: new ObjectId(id),
       });
       if (result === null) {
-        return status(404, { message: "Equipment not found or wrong room ID" });
+        return status(404, { message: await translate("API.errors.equipmentWrongRoom") });
       }
-      return { message: "Equipment deleted successfully" };
+      return { message: await translate("API.success.equipmentDeleted") };
     },
   )
   .post(

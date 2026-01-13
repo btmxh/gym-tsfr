@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { TrainerProfileWithId } from "@/lib/gym/trainer";
+import { useTranslations } from "next-intl";
 
 type TrainerWithUser = TrainerProfileWithId & {
   user?: {
@@ -17,6 +18,7 @@ type TrainerWithUser = TrainerProfileWithId & {
 };
 
 export default function TrainerCard({ trainer }: { trainer: TrainerWithUser }) {
+  const t = useTranslations("Trainers.trainerCard");
   const availableSlots = trainer.maxClients - (trainer.stats?.activeClients || 0);
 
   return (
@@ -39,7 +41,7 @@ export default function TrainerCard({ trainer }: { trainer: TrainerWithUser }) {
           </div>
 
           <div className="flex-1">
-            <h2 className="card-title">{trainer.user?.name || "Trainer"}</h2>
+            <h2 className="card-title">{trainer.user?.name || t("trainer")}</h2>
             <p className="text-sm text-base-content/70">
               {trainer.yearsOfExperience} years experience
             </p>

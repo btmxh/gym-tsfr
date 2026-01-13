@@ -18,22 +18,24 @@ import { usePathname } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "@/i18n/navigation";
 import { HidePageChrome } from "./hide-page-chrome";
+import { useTranslations } from "next-intl";
 
 export default function Navbar() {
   const pathname = usePathname();
   const { data: session, isPending: isSessionPending } =
     authClient.useSession();
   const router = useRouter();
+  const t = useTranslations("Navigation");
 
   const routes = [
-    ["Dashboard", "/dashboard", ChartPieIcon],
-    ["QR Scan", "/scan", QrCodeIcon],
-    ["Rooms", "/rooms", BuildingOfficeIcon],
-    ["Trainers", "/trainers", UserGroupIcon],
-    ["Memberships", "/memberships", UserPlusIcon],
-    ["Feedbacks", "/feedbacks", ChatBubbleLeftRightIcon],
+    [t("dashboard"), "/dashboard", ChartPieIcon],
+    [t("qrScan"), "/scan", QrCodeIcon],
+    [t("rooms"), "/rooms", BuildingOfficeIcon],
+    [t("trainers"), "/trainers", UserGroupIcon],
+    [t("memberships"), "/memberships", UserPlusIcon],
+    [t("feedbacks"), "/feedbacks", ChatBubbleLeftRightIcon],
     ...(session?.user?.role === "admin" 
-      ? [["Admin", "/admin", Cog6ToothIcon] as [string, string, React.FC]]
+      ? [[t("admin"), "/admin", Cog6ToothIcon] as [string, string, React.FC]]
       : []
     ),
   ] satisfies [string, string, React.FC][];
@@ -131,14 +133,14 @@ export default function Navbar() {
                 >
                   <ul className="flex flex-col">
                     <li className="menu-title font-bold text-lg text-center text-base-content">
-                      Hi, {session.user.name}
+                      {t("hi", { name: session.user.name })}
                     </li>
                     <li>
                       <Link
                         className="btn btn-info text-info-content"
                         href="/profile"
                       >
-                        View my profile
+                        {t("profile")}
                       </Link>
                     </li>
                     {session.user.role === "coach" && (
@@ -147,7 +149,7 @@ export default function Navbar() {
                           className="btn btn-success text-success-content"
                           href="/trainers/my-profile"
                         >
-                          My Trainer Profile
+                          {t("myTrainerProfile")}
                         </Link>
                       </li>
                     )}
@@ -160,7 +162,7 @@ export default function Navbar() {
                           router.push("/");
                         }}
                       >
-                        Sign out
+                        {t("signOut")}
                       </button>
                     </li>
                   </ul>
@@ -171,7 +173,7 @@ export default function Navbar() {
                 onClick={() => router.push("/auth/login")}
                 className="btn btn-primary"
               >
-                Sign in
+                {t("signIn")}
               </button>
             ))}
         </div>

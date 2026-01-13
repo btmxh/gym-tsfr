@@ -1,4 +1,5 @@
 import { authClient } from "@/lib/auth-client";
+import { useTranslations } from "next-intl";
 import { api } from "@/lib/eden";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import QRCode from "react-qr-code";
@@ -60,13 +61,14 @@ function QRCodeSection({
 }
 
 function classifyBMI(bmi: number): string {
-  if (bmi < 18.5) return "Underweight";
-  if (bmi < 25) return "Normal";
-  if (bmi < 30) return "Overweight";
-  return "Obese";
+  if (bmi < 18.5) return "underweight";
+  if (bmi < 25) return "normal";
+  if (bmi < 30) return "overweight";
+  return "obese";
 }
 
 function UserStats({ session }: { session: typeof authClient.$Infer.Session }) {
+  const tBmi = useTranslations("Profile.overview.bmiCategory");
   const month = new Date().getMonth();
   const monthNames = [
     "January",
@@ -121,7 +123,7 @@ function UserStats({ session }: { session: typeof authClient.$Infer.Session }) {
       <div className="stat place-items-center">
         <div className="stat-title">Body Mass Index</div>
         <div className="stat-value">{bmi.toFixed(1)}</div>
-        <div className="stat-desc">{classifyBMI(bmi)}</div>
+        <div className="stat-desc">{tBmi(classifyBMI(bmi))}</div>
       </div>
     </div>
   );
