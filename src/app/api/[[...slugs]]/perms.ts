@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { statement } from "@/lib/perms";
 import { status as elysiaStatus } from "elysia";
+import { t as translate } from "@/lib/i18n-server";
 
 type RoomPerm = (typeof statement)["rooms"][number];
 type EquipmentPerm = (typeof statement)["equipments"][number];
@@ -33,21 +34,24 @@ export const checkPerm = async (
   });
 
   if (!hasPerm) {
-    if (session === undefined) unauthorized(status);
-    else forbidden(status);
+    if (session === undefined) {
+      return await unauthorized(status);
+    } else {
+      return await forbidden(status);
+    }
   }
 
   return session;
 };
 
-export const unauthorized = (status: typeof elysiaStatus) => {
-  throw status(401, {
-    message: "Unauthorized",
+export const unauthorized = async (status: typeof elysiaStatus) => {
+  return status(401, {
+    message: await translate("API.errors.unauthorized"),
   });
 };
 
-export const forbidden = (status: typeof elysiaStatus) => {
-  throw status(403, {
-    message: "Forbidden",
+export const forbidden = async (status: typeof elysiaStatus) => {
+  return status(403, {
+    message: await translate("API.errors.forbidden"),
   });
 };
