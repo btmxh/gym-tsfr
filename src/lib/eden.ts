@@ -5,7 +5,7 @@ const getBaseUrl = () => {
 	if (typeof window !== "undefined") {
 		return window.location.origin;
 	}
-	return "http://localhost:3000";
+    return process.env.NEXT_SERVICE_BASE_URL ?? "http://localhost:3000";
 };
 
 // this require .api to enter /api prefix
