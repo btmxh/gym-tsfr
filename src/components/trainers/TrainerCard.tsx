@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useTranslations } from "next-intl";
 import { TrainerProfileWithId } from "@/lib/gym/trainer";
 import { useTranslations } from "next-intl";
 

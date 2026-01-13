@@ -23,6 +23,7 @@ function GeneralInformation({
 }: {
   session: typeof authClient.$Infer.Session;
 }) {
+  const tValidation = useTranslations("Validation");
   const generalInfoSchema = z.object({
     name: z.string().min(2, tValidation("nameMinLength")),
     phoneNumber: z.string().nonempty(tValidation("phoneRequired")),
@@ -240,6 +241,7 @@ function UpdateAvatar({
 }
 
 function UpdatePassword() {
+  const tValidation = useTranslations("Validation");
   const updatePasswordSchema = z
     .object({
       currentPassword: z.string().nonempty(),

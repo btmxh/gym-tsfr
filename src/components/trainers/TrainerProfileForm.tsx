@@ -53,7 +53,6 @@ export default function TrainerProfileForm({
 }) {
   const toast = useToast();
   const t = useTranslations("Trainers.trainerProfile");
-  const daysOfWeek = useDaysOfWeek();
 
   // Fetch existing profile
   const { data: profile } = useQuery({

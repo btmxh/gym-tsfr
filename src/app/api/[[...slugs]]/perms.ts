@@ -34,11 +34,8 @@ export const checkPerm = async (
   });
 
   if (!hasPerm) {
-    if (session === undefined) {
-      return await unauthorized(status);
-    } else {
-      return await forbidden(status);
-    }
+    if (session === undefined) unauthorized(status);
+    else forbidden(status);
   }
 
   return session;
