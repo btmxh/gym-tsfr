@@ -21,6 +21,7 @@ import { useRouter } from "@/i18n/navigation";
 import { DeleteRoomForm } from "@/components/rooms/DeleteRoomForm";
 import { UpdateRoomForm } from "@/components/rooms/UpdateRoomForm";
 import { useToast } from "@/components/toast-context";
+import { authClient } from "@/lib/auth-client";
 
 function CreateRoomForm() {
   const t = useTranslations("Room");
@@ -74,6 +75,20 @@ function CreateRoomForm() {
     },
   });
 
+  const session = authClient.useSession();
+  const { data: hasCreatePerm, isPending: isPendingPerm } = useQuery({
+    queryKey: ["userCreateRoomPerm", session?.data?.user?.id],
+    queryFn: async () => {
+      if (!session.data) return false;
+      const { data } = await authClient.admin.hasPermission({
+        permission: { rooms: ["create"] }
+      });
+      console.debug(data);
+      return data?.success ?? false;
+    }
+  });
+
+
   return (
     <form
       className="modal-box w-auto flex flex-col items-center"
@@ -119,9 +134,9 @@ function CreateRoomForm() {
           {tRooms("isActive")}
         </label>
 
-        <button className="btn btn-primary" type="submit" disabled={isPending}>
+        {!isPendingPerm && hasCreatePerm && <button className="btn btn-primary" type="submit" disabled={isPending}>
           {tRooms("create")}
-        </button>
+        </button>}
       </fieldset>
     </form>
   );

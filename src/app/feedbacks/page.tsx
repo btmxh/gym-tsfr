@@ -1,6 +1,7 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
+import { authClient } from "@/lib/auth-client";
 import { api } from "@/lib/eden";
 import { ChatBubbleLeftRightIcon, PlusIcon } from "@heroicons/react/24/solid";
 import { useQuery } from "@tanstack/react-query";
@@ -20,6 +21,18 @@ export default function FeedbacksPage() {
   });
 
   const formatter = useFormatter();
+  const session = authClient.useSession();
+  const { data: hasCreatePerm, isPending } = useQuery({
+    queryKey: ["currentUserPerm", session?.data?.user?.id],
+    queryFn: async () => {
+      if (!session.data) return false;
+      const { data } = await authClient.admin.hasPermission({
+        permission: { feedbacks: ["create"] }
+      });
+      console.debug(data);
+      return data?.success ?? false;
+    }
+  });
 
   return (
     <main className="flex flex-col items-center w-full p-4">
@@ -31,10 +44,10 @@ export default function FeedbacksPage() {
           </h1>
 
           <div className="flex items-center justify-end mb-4">
-            <Link href="/feedbacks/new" className="btn btn-primary font-bold">
+            {!isPending && hasCreatePerm && < Link href="/feedbacks/new" className="btn btn-primary font-bold">
               <PlusIcon className="size-4" />
               {t("createNew")}
-            </Link>
+            </Link>}
           </div>
         </div>
 
@@ -98,6 +111,6 @@ export default function FeedbacksPage() {
           <span className="loading loading-spinner"></span>
         )}
       </div>
-    </main>
+    </main >
   );
 }

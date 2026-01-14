@@ -11,6 +11,7 @@ import "react-quill-new/dist/quill.snow.css";
 import { api } from "@/lib/eden";
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/components/toast-context";
+import { authClient } from "@/lib/auth-client";
 const ReactQuill = dynamic(() => import("react-quill-new"), {
   ssr: false,
 });
@@ -18,6 +19,8 @@ const ReactQuill = dynamic(() => import("react-quill-new"), {
 export default function NewFeedbackPage() {
   const router = useRouter();
   const toast = useToast();
+  const session = authClient.useSession();
+  if(!session.data) router.push('/auth/login');
 
   const schema = z.object({
     title: z.string().min(5, "Title must have at least 5 characters"),

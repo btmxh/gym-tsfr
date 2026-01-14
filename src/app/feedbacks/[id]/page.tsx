@@ -13,6 +13,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { useToast } from "@/components/toast-context";
+import { authClient } from "@/lib/auth-client";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), {
   ssr: false,
@@ -85,6 +86,19 @@ export default function FeedbackThreadPage({
     };
   }, [id, queryClient]);
 
+  const session = authClient.useSession();
+  const { data: hasCreatePerm, isPending: isPendingPerm } = useQuery({
+    queryKey: ["currentUserPerm", session?.data?.user?.id],
+    queryFn: async () => {
+      if (!session.data) return false;
+      const { data } = await authClient.admin.hasPermission({
+        permission: { feedbacks: ["create"] }
+      });
+      console.debug(data);
+      return data?.success ?? false;
+    }
+  });
+
   return (
     <div className="w-full max-w-7xl mx-auto">
       {error && (
@@ -155,7 +169,7 @@ export default function FeedbackThreadPage({
         </div>
       ))}
 
-      <form
+      {!isPendingPerm && hasCreatePerm && <form
         onSubmit={handleSubmit((values) => addReply(values))}
         className="card shadow-xl bg-base-200 m-4 p-4 rounded-xl"
       >
@@ -196,7 +210,7 @@ export default function FeedbackThreadPage({
         >
           Submit
         </button>
-      </form>
+      </form>}
     </div>
   );
 }

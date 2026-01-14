@@ -5,6 +5,7 @@ import {
   inferAdditionalFields,
 } from "better-auth/client/plugins";
 import { auth } from "./auth";
+import { ac, admin, staff, coach, user, guest } from "@/lib/perms";
 
 const getBaseUrl = () => {
   // Client-side: use current origin (supports ngrok)
@@ -18,7 +19,10 @@ export const authClient = createAuthClient({
   baseURL: getBaseUrl(),
   plugins: [
     emailOTPClient(),
-    adminClient(),
+    adminClient({
+      ac,
+      roles: { admin, user, coach, staff, guest },
+    }),
     inferAdditionalFields<typeof auth>(),
   ],
 });

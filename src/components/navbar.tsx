@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Logo from "./logo";
-import { useEffect, useState } from "react";
 import ThemeController from "./theme-controller";
 import LanguageController from "./lang-controller";
 import {
@@ -20,6 +19,45 @@ import { useRouter } from "@/i18n/navigation";
 import { HidePageChrome } from "./hide-page-chrome";
 import { useTranslations } from "next-intl";
 
+type Route = [string, string, React.FC];
+function buildRoutes(
+  t: (key: string) => string,
+  role?: string | null
+): Route[] {
+  const base: Route[] = [
+    [t("dashboard"), "/dashboard", ChartPieIcon],
+    [t("trainers"), "/trainers", UserGroupIcon],
+    [t("memberships"), "/memberships", UserPlusIcon],
+    [t("feedbacks"), "/feedbacks", ChatBubbleLeftRightIcon],
+  ];
+
+  const qrRoute: Route = [t("qrScan"), "/scan", QrCodeIcon];
+
+  const adminOnly: Route[] = [
+    [t("rooms"), "/rooms", BuildingOfficeIcon],
+    [t("admin"), "/admin", Cog6ToothIcon],
+  ];
+
+  if (role === "admin") {
+    return [
+      base[0],        // dashboard
+      qrRoute,
+      ...adminOnly,
+      ...base.slice(1),
+    ];
+  }
+
+  if (role === "staff") {
+    return [
+      base[0],        // dashboard
+      qrRoute,
+      ...base.slice(1),
+    ];
+  }
+
+  return base;
+}
+
 export default function Navbar() {
   const pathname = usePathname();
   const { data: session, isPending: isSessionPending } =
@@ -27,18 +65,7 @@ export default function Navbar() {
   const router = useRouter();
   const t = useTranslations("Navigation");
 
-  const routes = [
-    [t("dashboard"), "/dashboard", ChartPieIcon],
-    [t("qrScan"), "/scan", QrCodeIcon],
-    [t("rooms"), "/rooms", BuildingOfficeIcon],
-    [t("trainers"), "/trainers", UserGroupIcon],
-    [t("memberships"), "/memberships", UserPlusIcon],
-    [t("feedbacks"), "/feedbacks", ChatBubbleLeftRightIcon],
-    ...(session?.user?.role === "admin" 
-      ? [[t("admin"), "/admin", Cog6ToothIcon] as [string, string, React.FC]]
-      : []
-    ),
-  ] satisfies [string, string, React.FC][];
+  const routes = buildRoutes(t, session?.user?.role);
 
   const navItems = routes.map(([name, path, RouteIcon]) => {
     const current = path.split("/")[1] === pathname.split("/")[1];
