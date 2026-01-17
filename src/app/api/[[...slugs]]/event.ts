@@ -21,13 +21,13 @@ const qrSigner = await QRSigner.fromPrivateKey(
 export const eventsRouter = new Elysia({ prefix: "/events" })
   .get("/qrcode", async ({ request: { headers }, status, set }) => {
     set.headers["Cache-Control"] = "no-store";
-
     const session = await auth.api.getSession({ headers });
     if (!session) return unauthorized(status);
     const url = await qrSigner.generateUrl(
       session,
       "https://gymembrace.app/qr",
     );
+    console.log("Generating QR code for user:", session.user.id, url);
     return { url };
   })
   .post(

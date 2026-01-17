@@ -11,8 +11,6 @@ function QRCodeSection({
 }: {
   session: typeof authClient.$Infer.Session;
 }) {
-  const queryClient = useQueryClient();
-
   const [seconds, setSeconds] = useState(QRCODE_TIMEOUT / 1000);
   const { data: qrCode, isPending } = useQuery({
     queryKey: ["qr-code-url", session.user.id],

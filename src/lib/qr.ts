@@ -1,5 +1,33 @@
 import { auth } from "./auth";
 
+if (!Uint8Array.prototype.toBase64) {
+  Object.defineProperty(Uint8Array.prototype, 'toBase64', {
+    value: function() {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+      let base64 = "";
+
+      // Process 3 bytes at a time to create 4 Base64 characters
+      for (let i = 0; i < this.length; i += 3) {
+        const byte1 = this[i];
+        const byte2 = i + 1 < this.length ? this[i + 1] : null;
+        const byte3 = i + 2 < this.length ? this[i + 2] : null;
+
+        const chunk = (byte1 << 16) | (byte2 << 8) | byte3;
+
+        base64 += chars[(chunk >> 18) & 63];
+        base64 += chars[(chunk >> 12) & 63];
+        base64 += byte2 !== null ? chars[(chunk >> 6) & 63] : "=";
+        base64 += byte3 !== null ? chars[chunk & 63] : "=";
+      }
+
+      return base64;
+    },
+    enumerable: false,
+    configurable: true,
+    writable: true
+  });
+}
+
 export const QRCODE_TIMEOUT = 60 * 1000;
 
 export type QRPayload = {
@@ -106,12 +134,16 @@ export class QRSigner {
   }
 
   async verifyUrl(url: string, expCheck?: boolean): Promise<QRPayload> {
-    // TODO: maybe filter hostname and etc?
-    // tbh not really necessary since the token itself is signed
-    const urlObj = new URL(url);
-    const token = urlObj.searchParams.get("token");
-    if (!token) throw new Error("No token in URL");
-    return await this.verifyToken(token, expCheck);
+    try {
+      // TODO: maybe filter hostname and etc?
+      // tbh not really necessary since the token itself is signed
+      const urlObj = new URL(url);
+      const token = urlObj.searchParams.get("token");
+      if (!token) throw new Error("No token in URL");
+      return await this.verifyToken(token, expCheck);
+    } catch (err) {
+      throw err;
+    }
   }
 
   /* ---------------- factories ---------------- */

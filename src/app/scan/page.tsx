@@ -71,7 +71,6 @@ export default function QRScanPage() {
   const onScan = async (result: IDetectedBarcode[], forceClear: boolean) => {
     try {
       if (verifier === undefined) throw new Error("Verifier not ready");
-      console.debug("wt");
       const [payload, tokenUrl] = await Promise.any(
         result.map((barcode) =>
           verifier
