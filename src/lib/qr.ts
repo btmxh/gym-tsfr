@@ -41,6 +41,56 @@ if (!Uint8Array.prototype.toBase64) {
     writable: true
   });
 }
+if (!Uint8Array.fromBase64) {
+  Object.defineProperty(Uint8Array, 'fromBase64', {
+    value: function(base64String: string, options: { alphabet?: string } = {}) {
+      if (typeof base64String !== 'string') {
+        throw new TypeError("The 'base64String' argument must be a string.");
+      }
+
+      const alphabet = options.alphabet === 'base64url'
+        ? "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+        : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+      // Build a lookup table for speed (char -> 6-bit value)
+      const lookup = new Uint8Array(256);
+      for (let i = 0; i < alphabet.length; i++) {
+        lookup[alphabet.charCodeAt(i)] = i;
+      }
+
+      // Remove padding and whitespace for processing
+      const cleaned = base64String.replace(/[=\s]/g, '');
+      const len = cleaned.length;
+      const bytes = new Uint8Array(Math.floor((len * 6) / 8));
+
+      let p = 0;
+      for (let i = 0; i < len; i += 4) {
+        const char1 = lookup[cleaned.charCodeAt(i)];
+        const char2 = lookup[cleaned.charCodeAt(i + 1)];
+        const char3 = i + 2 < len ? lookup[cleaned.charCodeAt(i + 2)] : null;
+        const char4 = i + 3 < len ? lookup[cleaned.charCodeAt(i + 3)] : null;
+
+        // First byte: all 6 bits of char1 + top 2 bits of char2
+        bytes[p++] = (char1 << 2) | (char2 >> 4);
+
+        // Second byte: bottom 4 bits of char2 + top 4 bits of char3
+        if (char3 !== null) {
+          bytes[p++] = ((char2 & 15) << 4) | (char3 >> 2);
+        }
+
+        // Third byte: bottom 2 bits of char3 + all 6 bits of char4
+        if (char4 !== null) {
+          bytes[p++] = (((char3 ?? 0) & 3) << 6) | char4;
+        }
+      }
+
+      return bytes;
+    },
+    enumerable: false,
+    configurable: true,
+    writable: true
+  });
+}
 
 export const QRCODE_TIMEOUT = 60 * 1000;
 
