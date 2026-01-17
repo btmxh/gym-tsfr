@@ -2,22 +2,36 @@ import { auth } from "./auth";
 
 if (!Uint8Array.prototype.toBase64) {
   Object.defineProperty(Uint8Array.prototype, 'toBase64', {
-    value: function() {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    value: function(options: { alphabet?: string, omitPadding?: boolean } = {}) {
+      const alphabet = options.alphabet === 'base64url'
+        ? "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+        : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+      const omitPadding = options.omitPadding || false;
       let base64 = "";
 
-      // Process 3 bytes at a time to create 4 Base64 characters
       for (let i = 0; i < this.length; i += 3) {
         const byte1 = this[i];
         const byte2 = i + 1 < this.length ? this[i + 1] : null;
         const byte3 = i + 2 < this.length ? this[i + 2] : null;
 
-        const chunk = (byte1 << 16) | (byte2 << 8) | byte3;
+        // Combine bits into a 24-bit chunk
+        const chunk = (byte1 << 16) | ((byte2 || 0) << 8) | (byte3 || 0);
 
-        base64 += chars[(chunk >> 18) & 63];
-        base64 += chars[(chunk >> 12) & 63];
-        base64 += byte2 !== null ? chars[(chunk >> 6) & 63] : "=";
-        base64 += byte3 !== null ? chars[chunk & 63] : "=";
+        base64 += alphabet[(chunk >> 18) & 63];
+        base64 += alphabet[(chunk >> 12) & 63];
+
+        if (byte2 !== null) {
+          base64 += alphabet[(chunk >> 6) & 63];
+        } else if (!omitPadding) {
+          base64 += "=";
+        }
+
+        if (byte3 !== null) {
+          base64 += alphabet[chunk & 63];
+        } else if (!omitPadding) {
+          base64 += "=";
+        }
       }
 
       return base64;
